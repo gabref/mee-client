@@ -42,9 +42,10 @@
 }
 
 :root {
-  --shadow: rgba(133, 133, 133, 0.5);
-  --black: #1a1a1a;
-  --white: #fff;
+	--shadow: rgba(133, 133, 133, 0.5);
+	--black: #1a1a1a;
+	--white: #fff;
+	--blue: #0099ff;
 }
 
 * {
@@ -98,7 +99,7 @@ body {
     border: 1px solid #09f;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
@@ -135,4 +136,4 @@ body {
   html {
     color-scheme: dark;
   }
-}
+} */
