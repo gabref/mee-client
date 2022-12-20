@@ -1,0 +1,33 @@
+.title {
+    margin: 16px 0;
+}
+
+.section {
+    width: 100%;
+    display: flex;
+}
+
+.side {
+    width: 50%;
+}
+
+.timeLeft {
+    float: right;
+    color: var(--gray)
+}
+
+.videoContainer {
+    overflow: hidden;
+    height: 300px;
+    width: 300px;
+}
+
+.video {
+    margin-top: -30px;
+    /* width: 400px;
+    height: 800px; */
+}
+
+.description {
+    margin: 40px 0 20px;
+}
