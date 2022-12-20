@@ -1,33 +1,80 @@
-import RoomCard from "@components/cards/RoomCard"
-import { useState } from "react"
-import style from './index.module.css'
-import { myrooms } from "@data/testData"
-import RoomWatcher from "@components/ui/RoomWatcher"
+import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+import style from './index.module.css';
+import { myrooms } from '@data/testData';
+import RoomCard from '@components/cards/RoomCard';
+import RoomWatcher from '@components/ui/RoomWatcher';
+import RoomHostList from '@components/ui/RoomHostList';
+
+const SOCKET_CONFIG = {
+	reconnectionAttempts: 5,
+	reconnectionDelay: 1000,
+	autoConnect: true
+};
 
 function Rooms() {
-    const [loading, setLoading] = useState(false)
-    const [rooms, setRooms] = useState([...myrooms])
-    const [selectedRoom, setSelectedRoom] = useState(null)
+	const [ socket, setSocket ] = useState<Socket | null>(null);
+	const [ selectedRoom, setSelectedRoom ] = useState(null);
+	const [ rooms, setRooms ] = useState([ ...myrooms ]);
+	const [ loading, setLoading ] = useState(false);
+	const [ isAdmin, setIsAdmin ] = useState(true);
 
-    return (
-        <>
-            {selectedRoom ? (
-                <>
-                    <h1>Salas</h1> 
-                    <br />
+	useEffect(
+		() => {
+			let newSocket: Socket;
+			if (isAdmin) {
+				newSocket = io(process.env.SOCKET_URL + '/admin', SOCKET_CONFIG);
+				setSocket(newSocket);
+			} else {
+				newSocket = io(process.env.SOCKET_URL + '/client', SOCKET_CONFIG);
+				setSocket(newSocket);
+			}
 
-                    <div className={style.roomsList}>
-                        {!loading ? rooms.map(({ roomId, preview, description, available }) => (
-                            <RoomCard roomId={roomId} preview={preview} description={description} available={available} />
-                        )) : 'Carregando...'}            
-                    </div>
-                </>
-            ) : (
-                <RoomWatcher />
-            )}
+			return () => {
+				newSocket.close();
+			};
+		},
+		[ setSocket ]
+	);
 
-        </>
-    )
+	return (
+		<div>
+			{socket ? (
+				<div>
+					{selectedRoom ? (
+						<div>
+							<h1>Salas</h1>
+							<br />
+
+							<div className={style.roomsList}>
+								{!loading ? (
+									rooms.map(({ roomId, preview, description, available }) => (
+										<RoomCard
+											roomId={roomId}
+											preview={preview}
+											description={description}
+											available={available}
+										/>
+									))
+								) : (
+									'Carregando...'
+								)}
+							</div>
+						</div>
+					) : (
+						<div>
+                            {isAdmin ? 
+                                <RoomHostList /> :
+                                <RoomWatcher />
+                            }
+                        </div>
+					)}
+				</div>
+			) : (
+				<p>No socket</p>
+			)}
+		</div>
+	);
 }
 
-export default Rooms
+export default Rooms;
