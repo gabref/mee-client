@@ -5,3 +5,11 @@
 	margin: 130px auto 40px;
 	padding: 40px;
 }
+
+.containerAdmin {
+	background-color: #f4f4f4;
+	max-width: 95%;
+	min-height: 512px;
+	margin: 130px auto 40px;
+	padding: 40px;
+}
