@@ -1,0 +1,14 @@
+.promocao {
+    display: flex;
+    justify-content: space-between;
+}
+
+.checkbox {
+    width: unset;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
