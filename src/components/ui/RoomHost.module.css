@@ -1,0 +1,24 @@
+.container {
+    background-color: #f4f4f4;
+    padding: 40px;
+}
+
+.section {
+    width: 100%;
+    display: flex;
+}
+
+.side {
+    width: 50%;
+}
+
+.timeLeft {
+    float: right;
+    color: #a1a1a1;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
