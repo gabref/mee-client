@@ -1,0 +1,17 @@
+.roomsList {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.newRoomContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--gray);
+    width: 47%;
+    min-height: 300px;
+}
