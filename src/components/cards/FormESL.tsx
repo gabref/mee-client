@@ -13,7 +13,7 @@ function FormESL() {
     const [promo, setPromo] = useState(false)
     const [message, setMessage] = useState('')
 
-    let handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
             const res = await fetch('/api/esl/updateEsl', {
