@@ -42,3 +42,12 @@ export const myrooms = [
         available: false
     },
 ]
+
+export const lessRooms = [
+    {
+        roomId: '',
+        description: 'olá',
+        preview: 'conjunto-1',
+        available: false
+    }
+]
