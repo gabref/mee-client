@@ -26,10 +26,10 @@ function Rooms() {
 		() => {
 			let newSocket: Socket;
 			if (isAdmin) {
-				newSocket = io(process.env.SOCKET_URL + '/admin', SOCKET_CONFIG);
+				newSocket = io(process.env.NEXT_PUBLIC_URL_SOCKET + '/admin', SOCKET_CONFIG);
 				setSocket(newSocket);
 			} else {
-				newSocket = io(process.env.SOCKET_URL + '/client', SOCKET_CONFIG);
+				newSocket = io(process.env.NEXT_PUBLIC_URL_SOCKET + '/client', SOCKET_CONFIG);
 				setSocket(newSocket);
 			}
 
@@ -59,6 +59,7 @@ function Rooms() {
 												{!loading ? (
 													rooms.map(({ roomId, preview, description, available }) => (
 														<RoomCard
+															key={roomId}
 															roomId={roomId}
 															preview={preview}
 															description={description}

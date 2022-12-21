@@ -1,42 +1,42 @@
 export const myrooms = [
     {
-        roomId: '',
+        roomId: 'minha sala',
         description: 'olá',
         preview: 'conjunto-1',
         available: false
     },
     {
-        roomId: '',
+        roomId: 'our sala',
         description: 'olá',
         preview: 'conjunto-2',
         available: false
     },
     {
-        roomId: '',
+        roomId: 'the sala',
         description: 'olá',
         preview: 'conjunto-1',
         available: false
     },
     {
-        roomId: '',
+        roomId: 'time 7',
         description: 'olá',
         preview: 'conjunto-2',
         available: false
     },
     {
-        roomId: '',
+        roomId: 'naruto',
         description: 'olá',
         preview: 'conjunto-1',
         available: false
     },
     {
-        roomId: '',
+        roomId: 'backa',
         description: 'olá',
         preview: 'conjunto-2',
         available: false
     },
     {
-        roomId: '',
+        roomId: 'rick',
         description: 'olá',
         preview: 'conjunto-1',
         available: false
