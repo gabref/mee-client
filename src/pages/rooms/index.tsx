@@ -44,34 +44,39 @@ function Rooms() {
 		<div>
 			{socket ? (
 				<div>
-					{selectedRoom ? (
-						<div>
-							<h1>Salas</h1>
-							<br />
+					{
+						isAdmin ? 
+						<RoomHostList /> :
+						(
+							<div>
+								{
+									!selectedRoom ? (
+										<div>
+											<h1>Salas</h1>
+											<br />
 
-							<div className={style.roomsList}>
-								{!loading ? (
-									rooms.map(({ roomId, preview, description, available }) => (
-										<RoomCard
-											roomId={roomId}
-											preview={preview}
-											description={description}
-											available={available}
-										/>
-									))
-								) : (
-									'Carregando...'
-								)}
+											<div className={style.roomsList}>
+												{!loading ? (
+													rooms.map(({ roomId, preview, description, available }) => (
+														<RoomCard
+															roomId={roomId}
+															preview={preview}
+															description={description}
+															available={available}
+														/>
+													))
+												) : (
+													'Carregando...'
+												)}
+											</div>
+										</div>
+									) : (
+										<RoomWatcher />
+									)
+								}
 							</div>
-						</div>
-					) : (
-						<div>
-                            {isAdmin ? 
-                                <RoomHostList /> :
-                                <RoomWatcher />
-                            }
-                        </div>
-					)}
+						)
+					}
 				</div>
 			) : (
 				<p>No socket</p>
