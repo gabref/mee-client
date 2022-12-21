@@ -62,6 +62,7 @@ function AuthProvider({ children }: any) {
         setUser(user)
 
         if (user.isAdmin) setIsAdmin(true)
+        else setIsAdmin(false)
 
         Router.push('/rooms')
     }
