@@ -5,6 +5,8 @@ import { myrooms } from '@data/testData';
 import RoomCard from '@components/cards/RoomCard';
 import RoomWatcher from '@components/ui/RoomWatcher';
 import RoomHostList from '@components/ui/RoomHostList';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 
 const SOCKET_CONFIG = {
 	reconnectionAttempts: 5,
@@ -78,3 +80,22 @@ function Rooms() {
 }
 
 export default Rooms;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+	const { ['mee.token-auth']: token } = parseCookies(ctx)
+
+	if (!token) {
+		return {
+			redirect: {
+				destination: '/login',
+				permanent: false
+			}
+		}
+	}
+
+	return {
+		props: {
+
+		}
+	}
+}
