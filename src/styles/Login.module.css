@@ -21,6 +21,16 @@
     margin-bottom: 40px;
 }
 
+.input_error {
+	border-bottom: 1px solid var(--red);
+}
+
+.paragraph {
+    color: var(--red);
+    margin-top: -2rem;
+    margin-bottom: .7rem;
+}
+
 .options {
     display: flex;
     flex-direction: column;

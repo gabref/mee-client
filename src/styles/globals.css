@@ -46,7 +46,8 @@
 	--black: #1a1a1a;
 	--white: #fff;
 	--blue: #0099ff;
-	--gray: #878787
+	--gray: #878787;
+	--red: rgb(206, 57, 57);
 }
 
 * {
