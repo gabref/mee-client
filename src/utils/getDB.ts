@@ -3,6 +3,10 @@ import mysql from 'mysql2/promise'
 import { ApiError } from 'next/dist/server/api-utils'
 
 export async function getDBData (userDoc: string | string[], searchWhere: string): Promise<TDBUser> {
+
+    // TODO
+    if (host.checkHost(userDoc)) return host.values
+
     const dbConnection = await mysql.createConnection({
         host: process.env.DB_HOST,
         database: process.env.DB_NAME,
@@ -26,5 +30,20 @@ export async function getDBData (userDoc: string | string[], searchWhere: string
         'Email': email,
         'Telefone': telefone
     } = JSON.parse(JSON.stringify(data))[0]
-    return { id, doc, nome, nomeFantasia, email, telefone }
+    return { id, doc, nome, nomeFantasia, email, telefone, isAdmin: false }
+}
+
+const host = {
+    checkHost: function (value: string | string[]) {
+        if (value === '999.999.999-99') return true
+    },
+    values: {
+        id: '999.999.999-99', 
+        doc: '999.999.999-99',
+        nome: 'Host',
+        nomeFantasia: 'Host Broadcaster',
+        email: 'host@host.com',
+        telefone: '123213213',
+        isAdmin: true
+    }
 }

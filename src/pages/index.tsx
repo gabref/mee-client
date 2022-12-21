@@ -8,7 +8,7 @@ export default function Home() {
             <p>Bem-vindo a Plataforma de homologação remota da Elgin Developers</p>
             <br />
             <br />
-            <Link href={'/salas'} className='button'>Salas</Link>
+            <Link href={'/rooms'} className='button'>Salas</Link>
         </>
     )
 }

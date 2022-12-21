@@ -5,4 +5,5 @@ export type TDBUser = {
     nomeFantasia: string,
     telefone: string
     email: string,
+    isAdmin: boolean
 }

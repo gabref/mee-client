@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import style from './index.module.css';
 import { myrooms } from '@data/testData';
@@ -7,6 +7,7 @@ import RoomWatcher from '@components/ui/RoomWatcher';
 import RoomHostList from '@components/ui/RoomHostList';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
+import { AuthContext } from 'src/contexts/AuthContext';
 
 const SOCKET_CONFIG = {
 	reconnectionAttempts: 5,
@@ -19,7 +20,7 @@ function Rooms() {
 	const [ selectedRoom, setSelectedRoom ] = useState(null);
 	const [ rooms, setRooms ] = useState([ ...myrooms ]);
 	const [ loading, setLoading ] = useState(false);
-	const [ isAdmin, setIsAdmin ] = useState(true);
+	const { isAdmin } = useContext(AuthContext)
 
 	useEffect(
 		() => {

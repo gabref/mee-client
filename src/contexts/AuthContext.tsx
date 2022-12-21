@@ -46,6 +46,7 @@ function AuthProvider({ children }: any) {
 
             const { user }: { user: TDBUser } = await res.json()
             setUser(user)
+            if (user.isAdmin) setIsAdmin(true)
         } catch (err) {
             console.error('Error happened: ' + err)
         }
@@ -59,6 +60,8 @@ function AuthProvider({ children }: any) {
         })
 
         setUser(user)
+
+        if (user.isAdmin) setIsAdmin(true)
 
         Router.push('/rooms')
     }
