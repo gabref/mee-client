@@ -3,4 +3,4 @@ const USER = {
     DOCUMENT: 'Documento'
 }
 
-export default USER
+export { USER }

@@ -1,4 +1,4 @@
-import USER from '@data/defines'
+import { USER } from '@data/defines'
 import { handleErrors } from '@utils/apiErrorHandling'
 import { getDBData } from '@utils/getDB'
 import { sign, verify } from 'jsonwebtoken'
