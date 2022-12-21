@@ -1,4 +1,4 @@
-import { USER } from '@data/defines'
+import { AUTH, USER } from '@data/defines'
 import { handleErrors } from '@utils/apiErrorHandling'
 import { getDBData } from '@utils/getDB'
 import { sign } from 'jsonwebtoken'
@@ -20,7 +20,7 @@ export default async function handler( req: NextApiRequest, res: NextApiResponse
     
         // autenticate user
         const token = sign({ id: userInfo.id }, process.env.JWT_PASS ?? '', {
-            expiresIn: '8h'
+            expiresIn: AUTH.API.TIME_EXPIRATION
         })
     
         return res.status(200).json({ token: token, user: userInfo })
