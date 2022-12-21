@@ -1,14 +1,6 @@
+import { TDBUser } from '@customTypes/types'
 import mysql from 'mysql2/promise'
 import { ApiError } from 'next/dist/server/api-utils'
-
-type TDBUser = {
-    id: string,
-    doc: string,
-    nome: string,
-    nomeFantasia: string,
-    telefone: string
-    email: string,
-}
 
 export async function getDBData (userDoc: string | string[], searchWhere: string): Promise<TDBUser> {
     const dbConnection = await mysql.createConnection({
