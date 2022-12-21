@@ -3,4 +3,8 @@ const USER = {
     DOCUMENT: 'Documento'
 }
 
-export { USER }
+const MEE_URL = {
+    API: process.env.URL_API || '/api'
+}
+
+export { USER, MEE_URL }
