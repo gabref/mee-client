@@ -40,6 +40,8 @@ function Rooms() {
 		[ setSocket ]
 	);
 
+	// socket list-rooms => setLoading - false && setRooms
+
 	return (
 		<div>
 			{socket ? (
