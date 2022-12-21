@@ -10,7 +10,7 @@ type TJwtPayload = {
 }
 
 export default async function handler( req: NextApiRequest, res: NextApiResponse ) {
-    if (req.method !== 'POST') res.status(405).json({ message: 'Accepts only POST method'})
+    if (req.method !== 'GET') res.status(405).json({ message: 'Accepts only GET method'})
 
     try {
         const { authorization } = req.headers
