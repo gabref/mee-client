@@ -21,7 +21,7 @@ function RoomHostList() {
     return (
         <div className={style.roomsList}>
             {!loading ? rooms.map(({ roomId, preview, description, available }) => (
-                <RoomHost />
+                <RoomHost key={roomId} />
             )) : 'Carregando...'}            
 
             <div className={style.newRoomContainer}>
