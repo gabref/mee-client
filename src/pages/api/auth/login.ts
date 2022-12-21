@@ -9,7 +9,7 @@ export default async function handler( req: NextApiRequest, res: NextApiResponse
     if (req.method !== 'POST') res.status(405).json({ message: 'Accepts only POST method'})
 
     try {
-        const { doc } = req.body
+        const { doc } = JSON.parse( req.body )
         
         if (!doc) throw new ApiError(400, 'Missing "doc" in body')
     
