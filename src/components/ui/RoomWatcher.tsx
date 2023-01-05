@@ -1,13 +1,27 @@
 import FormESL from '@components/cards/FormESL'
+import { TRoom } from '@customTypes/types'
+import Router from 'next/router'
+import { Dispatch, SetStateAction } from 'react'
+import { Socket } from 'socket.io-client'
 import style from './RoomWatcher.module.css'
 
 const beingUsed = true
 const token = 'dfkjs fjd k2je l2jrl2 e'
 
-function RoomWatcher() {
+function RoomWatcher({ socket, room, setSelectedRoom }: 
+                     { socket: Socket, room: TRoom, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
+
+    function handleBackButton() {
+        setSelectedRoom(null)
+        Router.reload()
+    }
 
     return (
         <>
+            <span 
+                className={`${style.back} `}
+                onClick={handleBackButton}
+            >Voltar</span> 
             <span className={style.timeLeft}>{beingUsed ? '30 restantes' : 'Conectando...'}</span> 
 
             <div className={style.section}>

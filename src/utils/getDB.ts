@@ -1,4 +1,4 @@
-import { TDBUser } from '@customTypes/types'
+import { TDBUser } from 'src/config/custom/types'
 import mysql from 'mysql2/promise'
 import { ApiError } from 'next/dist/server/api-utils'
 

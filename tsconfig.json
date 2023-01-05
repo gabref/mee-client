@@ -18,9 +18,10 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@contexts/*": ["src/components/*"],
-      "@customTypes/*": ["src/custom/*"],
+      "@services/*": ["src/services/*"],
+      "@customTypes/*": ["src/config/custom/*"],
       "@utils/*": ["src/utils/*"],
-      "@data/*": ["src/data/*"]
+      "@data/*": ["src/config/data/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "./src/"],

@@ -32,3 +32,20 @@
 .input {
     width: 95%;
 }
+
+.input_error {
+	border-bottom: 1px solid var(--red);
+}
+
+.closeButton {
+    float: right;
+    margin-right: -1rem;
+    margin-top: -1rem;
+
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

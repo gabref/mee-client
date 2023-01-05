@@ -1,12 +1,36 @@
+import { TRoom } from "@customTypes/types"
 import Image from "next/image"
+import { Dispatch, SetStateAction } from "react"
 import style from './RoomCard.module.css'
 
-function RoomCard({ roomId, preview, description, available }: { roomId: string, preview: string, description: string, available: boolean }) {
+function RoomCard({ room, setSelectedRoom }: { room: TRoom, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
+    
+    function handleClick() {
+        if (!room.room.available) return
+        setSelectedRoom(room)
+    }
+
     return (
-        <div key={roomId} className={style.container}>
-            <Image src={`/images/${preview}.png`} alt='...' width={200} height={200} />
-            <h4>{!description ? 'Em preparação' : description}</h4>
-            <span>{available ? 'Sala disponível' : (description ? 'Em uso' : 'Aguarde...')}</span>
+        <div 
+            key={room.room.roomName} 
+            className={`${room.room.available ? style.container : style.containerDisabled}`}
+            onClick={handleClick}
+        >
+            <h4>{room.room.roomName}</h4>
+            <Image 
+                src={`/images/${room.room.preview}.png`} 
+                alt={room.room.roomName} 
+                width={200} 
+                height={200} 
+            />
+            <h4>
+                {!room.room.title ? 'Em preparação' : room.room.title}
+            </h4>
+            <span>
+                {room.room.ready ? 
+                    (room.room.available ? 'Sala Disponível' : 
+                        (room.user ? 'Em uso' : 'Aguarde...')) : 'Aguarde...'}
+            </span>
         </div>
     )
 }

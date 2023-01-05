@@ -16,6 +16,15 @@
     color: var(--gray)
 }
 
+.back {
+    float: left;
+    color: var(--gray);
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+    cursor: pointer;
+    padding: .5rem;
+}
+
 .videoContainer {
     overflow: hidden;
     height: 300px;

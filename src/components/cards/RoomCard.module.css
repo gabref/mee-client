@@ -4,3 +4,9 @@
     align-items: center;
     cursor: pointer;
 }
+.containerDisabled {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+    filter: grayscale(100%);
+}
