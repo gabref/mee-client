@@ -15,7 +15,7 @@ function RoomHostList({ socket }: { socket: Socket }) {
     const [isConnected, setIsConnected] = useState(false)
     const roomNameRef = useRef<HTMLInputElement>(null)
 
-    const peerConnections = new Map<string, RTCPeerConnection>()
+    const peerConnections = new Map<string, RTCPeerConnection | null>()
 
     function handleNewRoom() {
         if (!roomNameRef.current?.value) {

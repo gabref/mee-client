@@ -1,8 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import style from './index.module.css';
-import { myrooms } from 'src/config/data/testData';
-import RoomCard from '@components/cards/RoomCard';
 import RoomWatcher from '@components/ui/RoomWatcher';
 import RoomHostList from '@components/ui/RoomHostList';
 import { GetServerSideProps } from 'next';
@@ -24,7 +21,7 @@ function Rooms() {
 
 	useEffect(
 		() => {
-			const namespace = isAdmin.current ? '/admin' : '/client'
+			const namespace = userRef.current?.isAdmin ? '/admin' : '/client'
 			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + namespace
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)

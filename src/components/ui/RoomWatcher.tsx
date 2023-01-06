@@ -125,7 +125,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                         case 'closed':
                         case 'failed':
                         case 'disconnected':
-                            // closeVideo()
+                            closeVideo()
+                            setTimeout(() => handleBackButton(), 2000)
                             break
                         default: break
                     }
