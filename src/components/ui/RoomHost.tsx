@@ -363,6 +363,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                 return
             setBtnVideoEnabled(true)
         }
+        getMediaDevices()
         checkIsReady()
         onDeviceChanges()
 
