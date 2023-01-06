@@ -55,7 +55,6 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                     console.log('something Went wrong', callback)
                     return
                 }
-            console.log('joining')
             socket.emit(EVENTS.CLIENT.JOINED, room.room.roomName)
             socket.emit(EVENTS.CLIENT.WATCHER, room.room.roomName )
         })

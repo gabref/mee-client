@@ -41,7 +41,6 @@ function RoomHostList({ socket }: { socket: Socket }) {
         
         socket.emit(EVENTS.ADMIN.CREATE_ROOM, newRoom) 
     }
-    // console.log(userRef.current?.nome)
 
     function handleSave() {
         socket.emit(EVENTS.ADMIN.SAVE_ROOMS)

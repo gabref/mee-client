@@ -38,7 +38,7 @@ function Rooms() {
 			{socket ? (
 				<div>
 					{
-						isAdmin.current ? 
+						userRef.current?.isAdmin ? 
 						<RoomHostList socket={socket} /> :
 						(
 							<div>

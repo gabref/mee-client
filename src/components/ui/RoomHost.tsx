@@ -169,7 +169,6 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
     // Triggered on changes to media devices and update list
     async function onDeviceChanges() {
         const newCameraList = await getConnectedVideoCameras()
-        console.log(newCameraList)
         setDevices(newCameraList)
     }
 
@@ -207,8 +206,6 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                     localStream = null
                 }
             }
-            // before closing the connection, check if there are no more transceivers
-            console.log(peerConnection.getTransceivers())
             // close the peer connection
             peerConnection.close()
             peerConnection = null
@@ -353,7 +350,6 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         }
 
         function onUnjoined(roomName: string) {
-            console.log('unjoined', roomName)
             if (roomName != iRoom.room.roomName) return
             setBeingUsed(false)
             setUserInfo({ name: 'default', socketId: '' })
