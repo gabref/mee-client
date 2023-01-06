@@ -49,3 +49,12 @@
     align-items: center;
     justify-content: center;
 }
+
+.buttonDisabled {
+    cursor: default;
+    padding: 10px 30px;
+	color: var(--gray);
+    border: 1px solid var(--gray);
+    font-weight: 700;
+    border-radius: 60px;
+}

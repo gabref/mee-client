@@ -51,3 +51,7 @@ export const lessRooms = [
         available: false
     }
 ]
+
+const doc1 = '545.021.810-99'
+const doc2 = '792.479.090-07'
+const doc3 = '99999999999'

@@ -10,7 +10,8 @@ const EVENTS = {
     ADMIN: {
         CONNECT_ERROR: 'admin:connect_error',
         START_VIDEO: 'admin:start-video',
-        BRADCASTER: 'admin:broadcaster',
+        STOP_VIDEO: 'admin:stop-video',
+        BROADCASTER: 'admin:broadcaster',
         OFFER: 'admin:offer',
         CANDIDATE: 'admin:candidate',
         END: 'admin:end',
@@ -21,11 +22,13 @@ const EVENTS = {
         },
         CREATE_ROOM: 'admin:create-room',
         DELETE_ROOM: 'admin:delete-room',
+        DELETE_THIS_ROOM: 'admin:delete-this-room',
         ROOM_CREATED: 'admin:room-created',
         SAVE_ROOMS: 'admin:save-rooms',
         GET_ROOMS: 'admin:get-rooms',
         UPDATE_DESCRIPTION_IMAGE: 'admin:update-description-image',
         READY: 'admin:ready',
+        UNREADY: 'admin:unready',
         TOGGLE_AVAILABLE: 'admin:make-available'
     },
     CLIENT: {
@@ -36,6 +39,8 @@ const EVENTS = {
         CANDIDATE: 'client:candidate',
         END: 'client:end',
         JOIN: 'client:join',
+        JOINED: 'client:joined',
+        UNJOINED: 'client:unjoined',
         EMIT: {
             BROADCASTER: 'client:broadcaster',
             OFFER: 'client:offer',

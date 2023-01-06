@@ -1,41 +1,68 @@
-import { TRoom, TRoomInfo } from '@customTypes/types'
-import { EVENTS } from '@data/events'
+import { TRoom, TRoomInfo, TUser } from '@customTypes/types'
+import { CODE, EVENTS } from '@data/events'
 import { IMAGES } from '@data/imagesConfig'
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import style from './RoomHost.module.css'
 
-function RoomHost({ room, socket, setRooms }: { room: TRoom, socket: Socket, setRooms: Dispatch<SetStateAction<TRoom[]>> }) {
-    const [selectedDevice, setSelectedDevice] = useState('')
-    const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
-    const videoRef = useRef<HTMLVideoElement>(null)
-    const [beingUsed, setBeingUsed] = useState(false)
+function RoomHost({ room, socket, setRooms, peerConnections }: 
+                  { room: TRoom, socket: Socket, 
+                    setRooms: Dispatch<SetStateAction<TRoom[]>>
+                    peerConnections: Map<string, RTCPeerConnection> }) {
 
     const [inputOk, setInputOk] = useState(true)
     const [inputMessage, setInputMessage] = useState('')
     const [descriptionMessage, setDescriptionMessage] = useState('')
     const [ready, setReady] = useState(false)
+    const [videoIsOn, setVideoIsOn] = useState(false)
     const [image, setImage] = useState<string>('')
     const descriptionRef = useRef<HTMLInputElement>(null)
-    // const roomRef = useRef<TRoom>(room)
     const [iRoom, setIRoom] = useState<TRoom>(room)
+    const [userInfo, setUserInfo] = useState<TUser>({name: 'default', socketId: ''})
+    const [btnVideoEnabled, setBtnVideoEnabled] = useState(false)
 
-    function updateDescriptionAndImage() {
+    const [selectedDevice, setSelectedDevice] = useState('')
+    const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
+    const [beingUsed, setBeingUsed] = useState(false)
+    const videoRef = useRef<HTMLVideoElement>(null)
+
+    let localStream: MediaStream
+    const config = {
+        iceServers: [
+            {
+                urls: [
+                    'stun:stun1.l.google.com:19302',
+                    'stun:stun2.l.google.com:19302'
+                ]
+            }
+        ]
+    }
+
+    function checkDescriptions() {
         if (!descriptionRef.current?.value) {
             setInputMessage('Escreva o nome da nova sala')
             setInputOk(false)
-            return
+            return false
         }
         if (image === '') {
             setDescriptionMessage('Escolha uma imagem')
-            return
+            return false
         }
+        return true
+    }
+
+    function updateDescriptionAndImage() {
+        const cont = checkDescriptions()
+        if (!cont) return
 
         setInputOk(true)
         socket.emit(EVENTS.ADMIN.UPDATE_DESCRIPTION_IMAGE, {
             room: iRoom,
-            description: descriptionRef.current.value,
+            description: descriptionRef.current?.value,
             image: image
+        }, function(callback: number) {
+            if (callback != CODE.ROOM.OK) return
+            setBtnVideoEnabled(true)
         })
     }
 
@@ -59,12 +86,39 @@ function RoomHost({ room, socket, setRooms }: { room: TRoom, socket: Socket, set
         socket.emit(EVENTS.ADMIN.TOGGLE_AVAILABLE, { availableRoom: availableRoom }, function (callback: TRoom) {
             setIRoom(callback)
         })
+
+        if (iRoom.room.available && !!userInfo.socketId) {
+            socket.emit(EVENTS.ADMIN.END, iRoom.room.roomName)
+        }
     }
 
     function deleteRoom() {
-        socket.emit(EVENTS.ADMIN.DELETE_ROOM, { iRoom }, function (callback: TRoom[]) {
-            setRooms(callback)
+        socket.emit(EVENTS.ADMIN.DELETE_ROOM, { iRoom: iRoom, clientSocketId: userInfo.socketId }, function ({ rooms, clientSocketId }: { rooms: TRoom[], clientSocketId: string }) {
+            // callback is an array of updated rooms
+            const peerConnection = peerConnections.get(clientSocketId)
+            if (peerConnection) {
+                peerConnection.onicecandidate = null
+                peerConnection.getTransceivers()
+                peerConnection.getTransceivers().forEach(transceiver => transceiver.stop())
+                peerConnection.close()
+            }
+            peerConnections.delete(clientSocketId)
+
+            setRooms(rooms)
         })
+    }
+
+    function handleVideoButton() {
+        const isOn = !videoIsOn
+        setVideoIsOn(!videoIsOn)
+
+        isOn ? 
+            socket.emit(EVENTS.ADMIN.READY, iRoom.room.roomName) :
+            socket.emit(EVENTS.ADMIN.UNREADY, iRoom.room.roomName)
+
+        isOn ? 
+            socket.emit(EVENTS.ADMIN.START_VIDEO, iRoom.room.roomName) :
+            socket.emit(EVENTS.ADMIN.STOP_VIDEO, iRoom.room.roomName)
     }
 
     useEffect(() => {
@@ -75,11 +129,232 @@ function RoomHost({ room, socket, setRooms }: { room: TRoom, socket: Socket, set
             setIRoom(room)
         }
 
+        function onUnready({ room }: { room: TRoom }) {
+            if (room.room.roomName !== iRoom.room.roomName) return
+            if (room.room.ready) return
+            setReady(false)
+            setIRoom(room)
+        }
+
+        function closeVideo(id: string | undefined, roomName: string ) {
+            if (roomName != room.room.roomName) return
+            console.log('*** Closing the video')
+            const clientSocketId = id || ''
+            const peerConnection = peerConnections.get(clientSocketId)
+            if (peerConnection) {
+                // disconnect all event listeners
+                peerConnection.onicecandidate = null
+                peerConnection.onnegotiationneeded = null
+                // stop all transceivers on the connection
+                peerConnection.getTransceivers().forEach(transceiver => {
+                    transceiver.stop()
+                })
+                // stop the webcam preview as well by pausing the <video> element,
+                // then stopping each of the getUserMedia() tracks on it
+                if (videoRef.current?.srcObject) {
+                    videoRef.current.pause()
+                    localStream.getTracks().forEach(track => track.stop())
+                    videoRef.current.srcObject = null
+                }
+                // close the peer connection
+                peerConnection.close()
+                return
+            }
+            // same if no peer connected
+            if (videoRef.current?.srcObject) {
+                videoRef.current.pause()
+                localStream.getTracks().forEach(track => track.stop())
+                videoRef.current.srcObject = null
+            }
+        }
+
+        function handleGetUserMediaErr(err: Error) {
+            console.error(`[${new Date().toLocaleDateString()}] Error ${err.name}: ${err.message}`)
+            switch(err.name) {
+                case 'NotFoundError':
+                    alert('Unable to open your video because no camera was found.')
+                    break
+                case 'SecurityError':
+                case 'PermissionDeniedError':
+                    break
+                default:
+                    alert('Error opening your camera...' + err.message)
+                    break
+            }
+            // make sure shuts down the host end of the RTCPeerConnection so is ready to try again
+            // stop the webcam preview as well by pausing the <video> element,
+            // then stopping each of the getUserMedia() tracks on it
+            if (videoRef.current?.srcObject) {
+                videoRef.current.pause()
+                localStream.getTracks().forEach(track => track.stop())
+            }
+        }
+
+        async function getVideo( roomName: string ) {
+            if (roomName != room.room.roomName) return
+            console.log('*** Starting the video')
+            try {
+                if(!videoRef.current) return
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: {
+                        aspectRatio: {
+                            ideal: 1.33333 // 3:2 aspect is preferred
+                        }
+                    }
+                })
+                videoRef.current.srcObject = localStream
+                socket.emit(EVENTS.ADMIN.BROADCASTER, {
+                    room: iRoom.room.roomName,
+                    user: iRoom.user?.name
+                })
+            } catch (err) {
+                if (err instanceof Error) handleGetUserMediaErr(err)
+                else console.error(err)
+            }
+        }
+
+        async function onWatcher( clientSocketId: string, roomName: string ) {
+            try {
+                if (roomName != room.room.roomName) return
+                console.log('watcher', clientSocketId)
+                const peerConnection = new RTCPeerConnection(config)
+                peerConnections.set(clientSocketId, peerConnection)
+                
+                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream))
+    
+                /** Handles |icecandidate| events by forwarding the specified ICE candidate (created by our local
+                 * ICE agent) to the other peer trhough the signaling server */
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate)
+                        socket.emit(EVENTS.ADMIN.CANDIDATE, clientSocketId, event.candidate )
+                }
+
+                // called by the webrtc layer to let us know when it's time to
+                // begin, resume, or restart ICE negotiation
+                peerConnection.onnegotiationneeded = async (event) => {
+                    console.log(`*** Negotiation needed ***`)
+                    try {
+                        console.log('--> Creating offer ')
+                        const offerSDP = await peerConnection.createOffer()
+
+                        // if the connection hasn't yet achieved the 'stable' state, return
+                        // to  the caller. Another negotiationneded event will be fired when
+                        // the state stabilizes
+                        if (peerConnection.signalingState != 'stable') return
+
+                        // establish the offer as the local peer's current description
+                        console.log('---> Setting local description to the offer')
+                        await peerConnection.setLocalDescription(offerSDP) // triggers the onicecandidate
+
+                        // send the offer to the remote peer
+                        console.log('---> Sending the offer to the remote peer')
+                        socket.emit(EVENTS.ADMIN.OFFER, 
+                                    clientSocketId, 
+                                    peerConnection.localDescription, 
+                                    roomName )
+                    } catch (err: any) { 
+                        console.log('*** Following error occurred while handling the negotiationneeded event: ')
+                        console.error(`[${new Date().toLocaleDateString()}] Error ${err.name}: ${err.message}`)
+                    }
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        }
+
+        async function onAnswer( clientSocketId: string, remoteDescription: RTCSessionDescriptionInit, roomName: string ) {
+            if (roomName != room.room.roomName) return
+            console.log('got answer', clientSocketId, '---', remoteDescription)
+            // Configure the remote description
+            try {
+                const desc = new RTCSessionDescription(remoteDescription)
+                // const peerConnection = peerConnections.get(clientSocketId)
+                // await peerConnection?.setLocalDescription(desc)
+                peerConnections.get(clientSocketId)?.setRemoteDescription(desc)
+                // await peerConnection.setRemoteDescription(desc)
+            } catch (err: any) { 
+                console.log('*** Following error occurred onAnswer event: ')
+                console.error(`[${new Date().toLocaleDateString()}] Error ${err.name}: ${err.message}`)
+            }
+        }
+
+        function onCandidate( id: string, candidate: RTCIceCandidateInit, roomName: string ) {
+            if (roomName != room.room.roomName) return
+            console.log('got ice candidate')
+            const candidateInit = new RTCIceCandidate(candidate)
+            peerConnections.get(id)?.addIceCandidate(candidateInit)
+            // peerConnection.addIceCandidate(candidateInit)
+        }
+
+        function onDisconnectPeer({ id, roomName }: { id: string, roomName: string }) {
+            console.log('disconnnect peer')
+            if (roomName != room.room.roomName) return
+            peerConnections.get(id)?.close()
+            peerConnections.delete(id)
+        }
+
+        function onDisconnect(reason: string) {
+            console.log(reason)
+        }
+
+        function onJoined(room: TRoom) {
+            if (room.room.roomName != iRoom.room.roomName) return
+            setBeingUsed(true)
+
+            if (!room.user) return
+            setUserInfo(room.user)
+        }
+
+        function onUnjoined(roomName: string) {
+            console.log('unjoined', roomName)
+            if (roomName != iRoom.room.roomName) return
+            setBeingUsed(false)
+            setUserInfo({ name: 'default', socketId: '' })
+        }
+
+        // on mount, check if room is ready
+        function checkIsReady () {
+            if (iRoom.room.title === '' || iRoom.room.title === 'default')
+                return
+            if (iRoom.room.preview === '' || iRoom.room.preview === 'default')
+                return
+            setBtnVideoEnabled(true)
+        }
+        checkIsReady()
+
         if (!socket) return
         socket.on(EVENTS.ADMIN.READY, onReady)
+        socket.on(EVENTS.ADMIN.UNREADY, onUnready)
+        socket.on(EVENTS.ADMIN.START_VIDEO, getVideo)
+        socket.on(EVENTS.ADMIN.STOP_VIDEO, closeVideo)
+        socket.on(EVENTS.ADMIN.EMIT.WATCHER, onWatcher)
+        socket.on(EVENTS.ADMIN.EMIT.ANSWER, onAnswer)
+        socket.on(EVENTS.ADMIN.EMIT.CANDIDATE, onCandidate)
+        socket.on(EVENTS.DISCONNECT_PEER, onDisconnectPeer)
+        socket.on(EVENTS.DISCONNECT, onDisconnect)
+
+        socket.on(EVENTS.CLIENT.JOINED, onJoined)
+        socket.on(EVENTS.CLIENT.UNJOINED, onUnjoined)
+
+        window.onunload = window.onbeforeunload = () => {
+            socket.emit(EVENTS.ADMIN.END, iRoom.room.roomName)
+            socket.disconnect()
+        }
 
         return () => {
             socket.off(EVENTS.ADMIN.READY, onReady)
+            socket.off(EVENTS.ADMIN.UNREADY, onUnready)
+            socket.off(EVENTS.ADMIN.START_VIDEO, getVideo)
+            socket.off(EVENTS.ADMIN.STOP_VIDEO, closeVideo)
+            socket.off(EVENTS.ADMIN.EMIT.WATCHER, onWatcher)
+            socket.off(EVENTS.ADMIN.EMIT.ANSWER, onAnswer)
+            socket.off(EVENTS.ADMIN.EMIT.CANDIDATE, onCandidate)
+            socket.off(EVENTS.DISCONNECT_PEER, onDisconnectPeer)
+            socket.off(EVENTS.DISCONNECT, onDisconnect)
+
+            socket.off(EVENTS.CLIENT.JOINED, onJoined)
+            socket.off(EVENTS.CLIENT.UNJOINED, onUnjoined)
         }
     }, [ socket ])
 
@@ -103,6 +378,13 @@ function RoomHost({ room, socket, setRooms }: { room: TRoom, socket: Socket, set
                                muted={true} 
                                playsInline={true} 
                                ref={videoRef} />
+                        <button 
+                            onClick={handleVideoButton} 
+                            className={`${iRoom.room.available ? style.buttonDisabled : 
+                                            btnVideoEnabled ? 'button' : style.buttonDisabled}`}
+                            disabled={iRoom.room.available ? true : 
+                                        btnVideoEnabled ? false : true }
+                        >{  videoIsOn ? 'Close Video' : 'Start Video' }</button>
                     </div>
 
                     <div className={style.side}>
@@ -111,7 +393,7 @@ function RoomHost({ room, socket, setRooms }: { room: TRoom, socket: Socket, set
 
                         <p><b>RoomName:</b> {room.room.roomName}</p>
                         <p><b>Em uso:</b> {beingUsed ? 'Sim' : 'Não'}</p>
-                        {beingUsed ? <p><b>Usuário:</b> samuel.silva@elgin.com.br</p> : ''}
+                        {beingUsed ? <p><b>Usuário:</b> {userInfo.name}</p> : ''}
 
                         <label><b>Câmera:</b> </label>
                         <select value={selectedDevice} onChange={(e) => setSelectedDevice(e.target.value)} id="cameras">

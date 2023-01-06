@@ -15,6 +15,8 @@ function RoomHostList({ socket }: { socket: Socket }) {
     const [isConnected, setIsConnected] = useState(false)
     const roomNameRef = useRef<HTMLInputElement>(null)
 
+    const peerConnections = new Map<string, RTCPeerConnection>()
+
     function handleNewRoom() {
         if (!roomNameRef.current?.value) {
             setMessage('Escreva o nome da nova sala')
@@ -49,11 +51,10 @@ function RoomHostList({ socket }: { socket: Socket }) {
         function socketConnect() {
             setIsConnected(true)
             socket.emit(EVENTS.ADMIN.GET_ROOMS, 
-                        { broadcasterName: userRef.current ? userRef.current.nome : 'admin' },
+                        { adminSocketId: socket.id },
                         function(roomsArray: TRoom[]) {
                             setRooms(roomsArray)
                         })
-            // console.log(userRef.current?.nome)
         }
 
         function onRoomCreated({ roomCode, room }: { roomCode: number, room: TRoom }) {
@@ -95,8 +96,10 @@ function RoomHostList({ socket }: { socket: Socket }) {
                                 room={room} 
                                 socket={socket} 
                                 setRooms={setRooms}
+                                peerConnections={peerConnections}
                             />
                         ))}
+
                         <div className={style.newRoomContainer} key='newRoom'>
                             <input
                                 type="text"
@@ -107,6 +110,7 @@ function RoomHostList({ socket }: { socket: Socket }) {
                             <p className={style.paragraph}>{message}</p>
                             <button className='button' onClick={handleNewRoom}>Criar Sala</button>
                         </div>
+
                         {rooms.length > 0 && 
                             <div className={style.saveContainer} >
                                 <p>Salvar Nomes e descrições das Salas</p>

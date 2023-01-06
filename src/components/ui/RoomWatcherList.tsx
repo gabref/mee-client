@@ -1,10 +1,11 @@
 import RoomCard from "@components/cards/RoomCard";
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { Socket } from "socket.io-client"
 
 import style from './RoomWatcherList.module.css'
 import { EVENTS } from "@data/events";
 import { TRoom } from "@customTypes/types";
+import { AuthContext } from "src/contexts/AuthContext";
 
 function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
     const [rooms, setRooms] = useState<TRoom[]>([])
@@ -28,6 +29,9 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
         socket.on(EVENTS.ADMIN.UPDATE_DESCRIPTION_IMAGE, onUpdate)
         socket.on(EVENTS.ADMIN.DELETE_ROOM, onUpdate)
         socket.on(EVENTS.ADMIN.TOGGLE_AVAILABLE, onUpdate)
+        socket.on(EVENTS.CLIENT.JOINED, onUpdate)
+        socket.on(EVENTS.CLIENT.UNJOINED, onUpdate)
+        socket.on(EVENTS.ADMIN.GET_ROOMS, onUpdate)
 
         return () => {
             socket.off('connect', socketConnect)
@@ -35,6 +39,9 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
             socket.off(EVENTS.ADMIN.UPDATE_DESCRIPTION_IMAGE, onUpdate)
             socket.off(EVENTS.ADMIN.DELETE_ROOM, onUpdate)
             socket.off(EVENTS.ADMIN.TOGGLE_AVAILABLE, onUpdate)
+            socket.off(EVENTS.CLIENT.JOINED, onUpdate)
+            socket.off(EVENTS.CLIENT.UNJOINED, onUpdate)
+            socket.off(EVENTS.ADMIN.GET_ROOMS, onUpdate)
         }
     }, [ socket ])
 
@@ -53,7 +60,7 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
 								setSelectedRoom={setSelectedRoom} 
                             />
                         ))
-                    ) : 'Nenhuma Sala Disponível no momento'
+                    ) : `Nenhuma Sala Disponível no momento`
                     : (
                     'Carregando...'
                 )}
