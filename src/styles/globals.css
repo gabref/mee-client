@@ -66,7 +66,7 @@ input {
 	background-color: #fff;
 	border: none;
 	border-bottom: 1px solid #1a1a1a;
-	width: 300px;
+	width: 100%;
 }
 
 input:disabled {

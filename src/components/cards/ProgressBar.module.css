@@ -1,0 +1,16 @@
+.parentDiv {
+    width: 100%;
+    height: 5px;
+    border-radius: 10px;
+    margin: 15px auto;
+    background-color: rgb(34, 34, 34);
+    box-shadow: inset 0 0 5px #000;
+}
+
+.childDiv {
+    height: 100%;
+    border-radius: 8px;
+    background-color: var(--gray);
+    text-align: right;
+    transition: width 1s ease-in-out;
+}

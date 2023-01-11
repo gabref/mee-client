@@ -1,4 +1,5 @@
 import FormESL from '@components/cards/FormESL'
+import Timer from '@components/cards/Timer'
 import { TRoom } from '@customTypes/types'
 import { CODE, EVENTS } from '@data/events'
 import Router from 'next/router'
@@ -38,7 +39,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
             broadcaster: room.broadcaster,
             user: {
                 name: userRef.current.nome,
-                socketId: socket.id
+                socketId: socket.id,
+                expirationTime: new Date().getTime()
             },
             room: {
                 roomName: room.room.roomName,
@@ -190,6 +192,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
 
         function onDisconnect(reason: string) {
             console.log(reason)
+            handleBackButton()
         }
 
         join()
@@ -224,7 +227,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 className={`${style.back} `}
                 onClick={handleBackButton}
             >Voltar</span> 
-            <span className={style.timeLeft}>30 restantes</span> 
+            <Timer />
 
             <div className={style.section}>
 

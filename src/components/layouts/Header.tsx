@@ -21,10 +21,14 @@ function Header() {
                     <div className={style.navDesktop}>
                         <ul>
                             <li><Link href={'/'}>Início</Link></li>
-                            <li><Link href={'/rooms'}>Salas</Link></li>
+                            <li><a href={'/rooms'}>Salas</a></li>
                             <li><Link href={'/jornada'}>Jornada</Link></li>
-                            <li><a href='https://github.com/ElginDeveloperCommunity' target={'_blank'} rel={'noopener noreferrer'}>GitHub</a></li>
-                            <li><a href='https://elgin.com.br/automacao/developers' target={'_blank'} rel={'noopener noreferrer'}>Developers Community</a></li>
+                            <li><a href='https://github.com/ElginDeveloperCommunity' 
+                                   target={'_blank'} 
+                                   rel={'noopener noreferrer'}>GitHub</a></li>
+                            <li><a href='https://elgin.com.br/automacao/developers' 
+                                   target={'_blank'} 
+                                   rel={'noopener noreferrer'}>Developers Community</a></li>
                         </ul>
                     </div>
                 </nav>

@@ -6,6 +6,7 @@ import style from './RoomWatcherList.module.css'
 import { EVENTS } from "@data/events";
 import { TRoom } from "@customTypes/types";
 import { AuthContext } from "src/contexts/AuthContext";
+import Router from "next/router";
 
 function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
     const [rooms, setRooms] = useState<TRoom[]>([])
@@ -23,6 +24,10 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
             setRooms(rooms)
         }
 
+        function onDisconnect() {
+            Router.reload()
+        }
+
         if (!socket) return
         socket.on('connect', socketConnect)
         socket.on(EVENTS.ADMIN.CREATE_ROOM, onUpdate)
@@ -32,6 +37,7 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
         socket.on(EVENTS.CLIENT.JOINED, onUpdate)
         socket.on(EVENTS.CLIENT.UNJOINED, onUpdate)
         socket.on(EVENTS.ADMIN.GET_ROOMS, onUpdate)
+        socket.on(EVENTS.DISCONNECT, onDisconnect)
 
         return () => {
             socket.off('connect', socketConnect)
@@ -42,6 +48,7 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
             socket.off(EVENTS.CLIENT.JOINED, onUpdate)
             socket.off(EVENTS.CLIENT.UNJOINED, onUpdate)
             socket.off(EVENTS.ADMIN.GET_ROOMS, onUpdate)
+            socket.off(EVENTS.DISCONNECT, onDisconnect)
         }
     }, [ socket ])
 
@@ -62,7 +69,14 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
                         ))
                     ) : `Nenhuma Sala Disponível no momento`
                     : (
-                    'Carregando...'
+                        <div className={style.loading}>
+                            <p>Carregando...</p>
+                            <button 
+                                className='button' 
+                                onClick={() => Router.reload()}
+                                >Recarregar Página
+                            </button>
+                        </div>
                 )}
             </div>
         </div>

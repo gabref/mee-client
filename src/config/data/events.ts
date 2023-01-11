@@ -57,6 +57,7 @@ const CODE = {
         DOESNT_EXISTS: -1,
         ALREADY_EXISTS: -2,
         NOT_EMPTY: -3,
+        NO_USER: -4
     },
     SOCKET: {
         OK: 0,
