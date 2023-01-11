@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import RoomWatcher from '@components/ui/RoomWatcher';
-import RoomHostList from '@components/ui/RoomHostList';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
-import { AuthContext } from 'src/contexts/AuthContext';
+
+import RoomWatcher from '@components/ui/RoomWatcher';
 import RoomWatcherList from '@components/ui/RoomWatcherList';
 import { TRoom } from '@customTypes/types';
+import { AuthContext } from 'src/contexts/AuthContext';
 
 const SOCKET_CONFIG = {
 	reconnectionAttempts: 5,
@@ -15,13 +15,13 @@ const SOCKET_CONFIG = {
 };
 
 function Rooms() {
+	const { userState } = useContext(AuthContext)
 	const [ socket, setSocket ] = useState<Socket | null>(null);
 	const [ selectedRoom, setSelectedRoom ] = useState<TRoom | null>(null);
-	const { isAdmin, userRef } = useContext(AuthContext)
 
 	useEffect(
 		() => {
-			const namespace = userRef.current?.isAdmin ? '/admin' : '/client'
+			const namespace = '/client'
 			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + namespace
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
@@ -35,34 +35,37 @@ function Rooms() {
 
 	return (
 		<div>
-			{socket ? (
-				<div>
-					{
-						userRef.current?.isAdmin ? 
-						<RoomHostList socket={socket} /> :
-						(
-							<div>
-								{
-									!selectedRoom ? (
-										<RoomWatcherList 
-											socket={socket} 
-											setSelectedRoom={setSelectedRoom} 
-										/>
-									) : (
-										<RoomWatcher 
-											socket={socket}
-											room={selectedRoom} 
-											setSelectedRoom={setSelectedRoom} 
-										/>
-									)
-								}
-							</div>
-						)
-					}
-				</div>
-			) : (
-				<p>No socket</p>
-			)}
+            { userState ? (
+                userState?.roles.indexOf('user')! == -1 ? (
+                    <div>
+                        <p>{userState.nome}</p>
+                        <p>Você não tem acesso a essa página!</p>
+                    </div>
+                ) : (
+					socket ? (
+						<div>
+							{
+								!selectedRoom ? (
+									<RoomWatcherList 
+										socket={socket} 
+										setSelectedRoom={setSelectedRoom} 
+									/>
+								) : (
+									<RoomWatcher 
+										socket={socket}
+										room={selectedRoom} 
+										setSelectedRoom={setSelectedRoom} 
+									/>
+								)
+							}
+						</div>
+					) : (
+						<p>No socket</p>
+					)
+                )
+            ) : (
+                <p>Carregando state...</p>
+            )}
 		</div>
 	);
 }

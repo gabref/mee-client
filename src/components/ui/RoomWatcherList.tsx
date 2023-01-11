@@ -5,7 +5,6 @@ import { Socket } from "socket.io-client"
 import style from './RoomWatcherList.module.css'
 import { EVENTS } from "@data/events";
 import { TRoom } from "@customTypes/types";
-import { AuthContext } from "src/contexts/AuthContext";
 import Router from "next/router";
 
 function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {

@@ -30,7 +30,7 @@ export async function getDBData (userDoc: string | string[], searchWhere: string
         'Email': email,
         'Telefone': telefone
     } = JSON.parse(JSON.stringify(data))[0]
-    return { id, doc, nome, nomeFantasia, email, telefone, isAdmin: false }
+    return { id, doc, nome, nomeFantasia, email, telefone, roles: ['user'] }
 }
 
 const host = {
@@ -44,6 +44,6 @@ const host = {
         nomeFantasia: 'Host Broadcaster',
         email: 'host@host.com',
         telefone: '123213213',
-        isAdmin: true
+        roles: ['host']
     }
 }

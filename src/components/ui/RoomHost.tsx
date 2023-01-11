@@ -352,7 +352,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         function onUnjoined(roomName: string) {
             if (roomName != iRoom.room.roomName) return
             setBeingUsed(false)
-            setUserInfo({ name: 'default', socketId: '' })
+            setUserInfo({ name: 'default', socketId: '', expirationTime: 0 })
         }
 
         // on mount, check if room is ready

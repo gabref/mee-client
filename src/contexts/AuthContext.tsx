@@ -1,8 +1,8 @@
 import { TDBUser } from 'src/config/custom/types'
 import { AUTH, MEE_URL } from 'src/config/data/defines'
 import Router from 'next/router'
-import { parseCookies, setCookie } from 'nookies'
-import { createContext, MutableRefObject, useEffect, useRef, useState } from 'react'
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
+import { createContext, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 
 type TSignInData = {
     doc: string
@@ -10,32 +10,34 @@ type TSignInData = {
 
 type TAuthContext = {
     isAuthenticated: boolean,
-    isAdmin: MutableRefObject<Boolean>,
-    userRef: MutableRefObject<TDBUser | null>,
-    signIn: (data: TSignInData) => Promise<void>
+    userState: TDBUser | null,
+    signIn: (data: TSignInData) => Promise<void>,
+    handleLogOut: () => Promise<void>
 }
 
 const AuthContext = createContext({} as TAuthContext)
 
 function AuthProvider({ children }: any) {
-    // const [user, setUser] = useState<TDBUser | null>(null)
-    // const [isAdmin, setIsAdmin] = useState(false)
-    const userRef = useRef<TDBUser | null>(null)
-    const isAdmin = useRef<Boolean>(false)
+    const [userState, setUserState] = useState<TDBUser | null>(null)
 
     // if user != null, return true
-    const isAuthenticated = !!userRef.current
+    const isAuthenticated = !!userState
 
     useEffect(() => {
         const { 'mee.token-auth': token } = parseCookies()
-        const path = Router.pathname.startsWith('/login')
+        const loginPath = Router.pathname.startsWith('/login')
 
-        if (!(token && !path)) return
+        if (!(token && !loginPath)) return
 
-        recoverUserInfo(token)
+        updateUserInfo()
+         
+        async function updateUserInfo() {
+            const user = await recoverUserInfo(token)
+            if (user) setUserState(user)
+        }
     }, [])
 
-    async function recoverUserInfo(token: string) {
+    async function recoverUserInfo (token: string) {
         const statusCodeOk = [200, 304]
         try {
             const res = await fetch(MEE_URL.API + '/auth/verify', {
@@ -49,8 +51,7 @@ function AuthProvider({ children }: any) {
 
             const { user }: { user: TDBUser } = await res.json()
 
-            if (user) userRef.current = user
-            if (userRef.current?.isAdmin) isAdmin.current = true
+            return user
         } catch (err) {
             console.error('Error happened: ' + err)
         }
@@ -62,12 +63,12 @@ function AuthProvider({ children }: any) {
         setCookie(undefined, 'mee.token-auth', token, {
             maxAge: AUTH.API.TIME_EXPIRATION
         })
-        if (user) userRef.current = user
+        if (user) setUserState(user)
 
-        if (user.isAdmin) isAdmin.current = true // setIsAdmin(true)
-        else isAdmin.current = false // setIsAdmin(false)
-
-        Router.push('/rooms')
+        if (user.roles.indexOf('host') != -1)
+            Router.push('/admin/rooms')
+        else
+            Router.push('/rooms')
     }
 
     async function signInRequest(docNumber: string) {
@@ -86,8 +87,13 @@ function AuthProvider({ children }: any) {
         return { token, user }
     }
 
+    async function handleLogOut() {
+        destroyCookie(undefined, 'mee.token-auth')
+        Router.reload()
+    }
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isAdmin, signIn, userRef }} >
+        <AuthContext.Provider value={{ isAuthenticated, signIn, userState, handleLogOut }} >
             {children}
         </AuthContext.Provider>
     )

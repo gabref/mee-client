@@ -8,7 +8,7 @@ import { TRoom } from '@customTypes/types'
 import { AuthContext } from 'src/contexts/AuthContext'
 
 function RoomHostList({ socket }: { socket: Socket }) {
-    const { userRef } = useContext(AuthContext)
+    const { userState } = useContext(AuthContext)
     const [rooms, setRooms] = useState<TRoom[]>([])
     const [inputOk, setInputOk] = useState(true)
     const [message, setMessage] = useState('')
@@ -33,7 +33,7 @@ function RoomHostList({ socket }: { socket: Socket }) {
                 available: false
             },
             broadcaster: {
-                name: userRef.current ? userRef.current.nome : 'admin',
+                name: userState ? userState.nome : 'admin',
                 socketId: socket.id
             },
             user: null

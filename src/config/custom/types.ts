@@ -5,7 +5,7 @@ export type TDBUser = {
     nomeFantasia: string,
     telefone: string
     email: string,
-    isAdmin: boolean
+    roles: string[]
 }
 
 export type TJwtPayload = {

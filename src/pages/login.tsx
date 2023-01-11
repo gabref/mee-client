@@ -1,5 +1,4 @@
 import { cnpjMask, cpfMask } from '@utils/mask'
-import { P } from 'pino'
 import { FormEvent, useContext, useState } from 'react'
 import { AuthContext } from 'src/contexts/AuthContext'
 import style from '../styles/Login.module.css'

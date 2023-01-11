@@ -13,7 +13,7 @@ const token = 'dfkjs fjd k2je l2jrl2 e'
 function RoomWatcher({ socket, room, setSelectedRoom }: 
                      { socket: Socket, room: TRoom, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
 
-    const { userRef } = useContext(AuthContext)
+    const { userState } = useContext(AuthContext)
     const videoRef = useRef<HTMLVideoElement>(null)
 
     let peerConnection: RTCPeerConnection
@@ -34,11 +34,11 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
     }
 
     function join() {
-        if (!userRef.current) return
+        if (!userState) return
         const newRoom: TRoom  = {
             broadcaster: room.broadcaster,
             user: {
-                name: userRef.current.nome,
+                name: userState.nome,
                 socketId: socket.id,
                 expirationTime: new Date().getTime()
             },
