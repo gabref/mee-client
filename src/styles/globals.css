@@ -50,7 +50,9 @@
 	--red: rgb(206, 57, 57);
 }
 
-* {
+*,
+*::after,
+*::before {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
