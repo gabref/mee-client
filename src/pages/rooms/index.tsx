@@ -7,6 +7,7 @@ import RoomWatcher from '@components/ui/RoomWatcher';
 import RoomWatcherList from '@components/ui/RoomWatcherList';
 import { TRoom } from '@customTypes/types';
 import { AuthContext } from 'src/contexts/AuthContext';
+import { EVENTS } from '@data/events';
 
 const SOCKET_CONFIG = {
 	reconnectionAttempts: 5,
@@ -21,8 +22,7 @@ function Rooms() {
 
 	useEffect(
 		() => {
-			const namespace = '/client'
-			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + namespace
+			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + EVENTS.NAMESPACE.CLIENT
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
 

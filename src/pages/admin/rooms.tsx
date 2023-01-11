@@ -5,6 +5,7 @@ import { parseCookies } from 'nookies';
 
 import RoomHostList from '@components/ui/RoomHostList';
 import { AuthContext } from 'src/contexts/AuthContext';
+import { EVENTS } from '@data/events';
 
 const SOCKET_CONFIG = {
 	reconnectionAttempts: 5,
@@ -18,8 +19,7 @@ function AdminRooms() {
 
 	useEffect(
 		() => {
-			const namespace = '/admin'
-			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + namespace
+			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + EVENTS.NAMESPACE.ADMIN
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
 
