@@ -70,6 +70,7 @@ function RoomHostList({ socket }: { socket: Socket }) {
         }
 
         if (!socket) return
+        if (!userState) return
         socket.on('connect', socketConnect)
         socket.on(EVENTS.ADMIN.ROOM_CREATED, onRoomCreated)
 
@@ -77,7 +78,7 @@ function RoomHostList({ socket }: { socket: Socket }) {
             socket.off('connect', socketConnect)
             socket.off(EVENTS.ADMIN.ROOM_CREATED, onRoomCreated)
         }
-    }, [ socket ])
+    }, [ socket, userState ])
 
     return (
         <div>

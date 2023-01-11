@@ -6,8 +6,10 @@ import style from './RoomWatcherList.module.css'
 import { EVENTS } from "@data/events";
 import { TRoom } from "@customTypes/types";
 import Router from "next/router";
+import { AuthContext } from "src/contexts/AuthContext";
 
 function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
+    const { userState } = useContext(AuthContext)
     const [rooms, setRooms] = useState<TRoom[]>([])
     const [isConnected, setIsConnected] = useState(false)
 
@@ -28,6 +30,7 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
         }
 
         if (!socket) return
+        if (!userState) return
         socket.on('connect', socketConnect)
         socket.on(EVENTS.ADMIN.CREATE_ROOM, onUpdate)
         socket.on(EVENTS.ADMIN.UPDATE_DESCRIPTION_IMAGE, onUpdate)
@@ -49,7 +52,7 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
             socket.off(EVENTS.ADMIN.GET_ROOMS, onUpdate)
             socket.off(EVENTS.DISCONNECT, onDisconnect)
         }
-    }, [ socket ])
+    }, [ socket, userState ])
 
     return (
         <div>

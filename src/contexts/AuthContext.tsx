@@ -34,6 +34,7 @@ function AuthProvider({ children }: any) {
         async function updateUserInfo() {
             const user = await recoverUserInfo(token)
             if (user) setUserState(user)
+            else setUserState(null)
         }
     }, [])
 
@@ -65,8 +66,9 @@ function AuthProvider({ children }: any) {
         })
         if (user) setUserState(user)
 
-        if (user.roles.indexOf('host') != -1)
+        if (user.roles.indexOf('host') != -1){
             Router.push('/admin/rooms')
+        }
         else
             Router.push('/rooms')
     }

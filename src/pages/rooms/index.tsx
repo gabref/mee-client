@@ -22,6 +22,8 @@ function Rooms() {
 
 	useEffect(
 		() => {
+			if (!userState) return
+
 			const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + EVENTS.NAMESPACE.CLIENT
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
@@ -30,7 +32,7 @@ function Rooms() {
 				newSocket.close();
 			};
 		},
-		[ setSocket ]
+		[ setSocket, userState ]
 	);
 
 	return (
