@@ -1,28 +1,31 @@
 import FormESL from '@components/cards/FormESL'
 import Timer from '@components/cards/Timer'
 import { TRoom } from '@customTypes/types'
+import { MEE_URL } from '@data/defines'
 import { CODE, EVENTS } from '@data/events'
 import Router from 'next/router'
-import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef } from 'react'
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import { AuthContext } from 'src/contexts/AuthContext'
 import style from './RoomWatcher.module.css'
-
-const token = 'dfkjs fjd k2je l2jrl2 e'
 
 function RoomWatcher({ socket, room, setSelectedRoom }: 
                      { socket: Socket, room: TRoom, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
 
     const { userState } = useContext(AuthContext)
+    const [token, setToken] = useState('')
     const videoRef = useRef<HTMLVideoElement>(null)
 
-    let peerConnection: RTCPeerConnection
+    let peerConnection: RTCPeerConnection | null
     const config = {
         iceServers: [
             {
                 urls: [
                     'stun:stun1.l.google.com:19302',
-                    'stun:stun2.l.google.com:19302'
+                    'stun:stun2.l.google.com:19302',
+                    'stun:stun.l.google.com:19302',
+                    'stun:stun3.l.google.com:19302',
+                    'stun:stun4.l.google.com:19302',
                 ]
             }
         ]
@@ -53,8 +56,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         socket.emit(EVENTS.CLIENT.JOIN, { room: newRoom }, 
             function(callback: number) {
                 if (callback != CODE.ROOM.OK) {
-                    handleBackButton()
                     console.log('something Went wrong', callback)
+                    handleBackButton()
                     return
                 }
             socket.emit(EVENTS.CLIENT.JOINED, room.room.roomName)
@@ -81,6 +84,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                     videoRef.current.srcObject = null
                 }
                 peerConnection.close()
+                peerConnection = null
             }
         }
 
@@ -121,8 +125,11 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                  * This is called when the state of the ICE agent changes
                  */
                 peerConnection.oniceconnectionstatechange = (event) => {
-                    console.log(`*** ICE connection state changed to ${peerConnection.iceConnectionState} ***`)
-                    switch(peerConnection.iceConnectionState) {
+                    console.log(`*** ICE connection state changed to ${peerConnection?.iceConnectionState} ***`)
+                    switch(peerConnection?.iceConnectionState) {
+                        case 'connected':
+                            console.log('iceconnectionstate ', peerConnection.iceConnectionState)
+                            break
                         case 'closed':
                         case 'failed':
                         case 'disconnected':
@@ -165,7 +172,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
 
         function onCandidate( id: string, candidate: RTCIceCandidateInit ) {
             try {
-                if(peerConnection.remoteDescription) {
+                if(peerConnection?.remoteDescription) {
                     console.log('ice candidate')
                     peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
                 }
@@ -175,11 +182,12 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         }
 
         function onDeleteRoom() {
+            closeVideo()
             setTimeout(() => handleBackButton(), 2000)
         }
 
         function onDisconnectPeer() {
-            peerConnection.close()
+            closeVideo()
             setTimeout(() => handleBackButton(), 2000);
         }
 
@@ -192,6 +200,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
 
         function onDisconnect(reason: string) {
             console.log(reason)
+            closeVideo()
             handleBackButton()
         }
 
@@ -220,6 +229,33 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         socket.off(EVENTS.DISCONNECT, onDisconnect)
         }
     }, [socket])
+
+    async function signInRequest(docNumber: string) {
+        const res = await fetch(MEE_URL.API + '/esl/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ doc: docNumber })
+        })
+        if (res.status != 200)
+            throw new Error('SignIn Request Error = statusCode ' + res.status)
+
+        const { token }: { token: string } = await res.json()
+        
+        if (token === undefined) throw new Error('Token Generation Error')
+
+        return { token }
+    }
+
+    async function getEslToken() {
+        try {
+            if (!userState) return
+            const { token: eslToken } = await signInRequest(userState.doc)
+            setToken(eslToken)
+        } catch(err) {
+            console.log('Got Error: ' + err)
+        }
+    }
+
+    getEslToken()
 
     return (
         <>
@@ -255,18 +291,22 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
 
             </div>
 
-            <div className={style.description}>
-                <h3>Opções de Integração:</h3>
-                <p>A Elgin disponibiliza duas formas de integrar sua solução as nossas etiquetas</p>
-            </div>
+            <div className={style.sectionDescription}>
+                <div className={style.description}>
+                    <h3>Opções de Integração:</h3>
+                    <p>A Elgin disponibiliza duas formas de integrar sua solução as nossas etiquetas</p>
+                </div>
 
-            <div className={style.side}>
-                <h4>Via DLL</h4>
-                <p>Clique no link abaixo para ser redirecinado ao nosso GitHub onde você poderá baixar a última versão da DLL de integração.</p>
-                <p>Seu token: <b>{token}</b></p>
-                <br />
-                <a href={'https://github.com/ElginDeveloperCommunity/'} target={'_blank'}>GitHub</a>
-                <span>A documentação de uso da API está em nosso <a href={'https://github.com/ElginDeveloperCommunity/Equipamentos/tree/master/Elgin/Etiqueta%20Eletr%C3%B4nica/Documenta%C3%A7%C3%A3o'} target={'_blank'}>GitHub.</a></span>
+                <div className={style.description}>
+                    <h4>Via DLL</h4>
+                    <p>Clique  
+                        <a href={'https://github.com/ElginDeveloperCommunity/'} target={'_blank'}> aqui </a>
+                         para ser redirecinado ao nosso GitHub onde você poderá baixar a última versão da DLL de integração.</p>
+                    <br />
+                    <p>Seu token: <b>{token}</b></p>
+                    <br />
+                    <span>A documentação de uso da API está em nosso <a href={'https://github.com/ElginDeveloperCommunity/Equipamentos/tree/master/Elgin/Etiqueta%20Eletr%C3%B4nica/Documenta%C3%A7%C3%A3o'} target={'_blank'}>GitHub.</a></span>
+                </div>
             </div>
         </>
     )

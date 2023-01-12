@@ -33,7 +33,11 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
             {
                 urls: [
                     'stun:stun1.l.google.com:19302',
-                    'stun:stun2.l.google.com:19302'
+                    'stun:stun2.l.google.com:19302',
+                    'stun:stun.l.google.com:19302',
+                    'stun:stun3.l.google.com:19302',
+                    'stun:stun4.l.google.com:19302',
+
                 ]
             }
         ]
@@ -82,7 +86,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                 ready: iRoom.room.ready,
                 available: available
             },
-            user: userInfo
+            user: available ? null : userInfo
         }
         socket.emit(EVENTS.ADMIN.TOGGLE_AVAILABLE, { availableRoom: availableRoom }, function (callback: TRoom) {
             setIRoom(callback)
@@ -278,7 +282,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                     console.log(`*** Negotiation needed ***`)
                     try {
                         console.log('--> Creating offer ')
-                        const offerSDP = await peerConnection.createOffer()
+                        const offerSDP = await peerConnection.createOffer({ iceRestart: true })
 
                         // if the connection hasn't yet achieved the 'stable' state, return
                         // to  the caller. Another negotiationneded event will be fired when
@@ -332,8 +336,9 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         function onDisconnectPeer({ id, roomName }: { id: string, roomName: string }) {
             console.log('disconnnect peer')
             if (roomName != room.room.roomName) return
-            peerConnections.get(id)?.close()
+            closeVideo(id, roomName)
             peerConnections.delete(id)
+            getVideo(roomName)
         }
 
         function onDisconnect(reason: string) {

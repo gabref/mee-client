@@ -9,14 +9,12 @@ export default async function handler( req: NextApiRequest, res: NextApiResponse
     if (req.method !== 'POST') res.status(405).json({ message: 'Accepts only POST method'})
 
     try {
-        const { doc } = req.body
+        const { doc } = JSON.parse( req.body )
         
         if (!doc) throw new ApiError(400, 'Missing "doc" in body')
     
         // get user
         const userInfo = await getDBData(doc, USER.DOCUMENT)
-    
-        // verify password
     
         // autenticate user
         const token = sign({ id: userInfo.id }, process.env.JWT_ESL_PASS ?? '', {
