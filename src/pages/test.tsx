@@ -1,5 +1,3 @@
-import Canvas from "@components/cards/Canvas";
-import FileBase64 from "@components/cards/FileBase64";
 import RoomWatcher from "@components/ui/RoomWatcher";
 import { TRoom } from "@customTypes/types";
 import { EVENTS } from "@data/events";
