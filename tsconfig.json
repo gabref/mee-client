@@ -20,6 +20,7 @@
       "@contexts/*": ["src/components/*"],
       "@services/*": ["src/services/*"],
       "@customTypes/*": ["src/config/custom/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@utils/*": ["src/utils/*"],
       "@data/*": ["src/config/data/*"]
     }

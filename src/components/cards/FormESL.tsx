@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react'
+import FileBase64 from './FileBase64'
 import style from './FormESL.module.css'
 
 function FormESL() {
@@ -52,47 +53,52 @@ function FormESL() {
     }
 
     return (
-        <form className={style.form} onSubmit={handleSubmit}>
-            <input type="text" 
-                placeholder="ID da Etiqueta" 
-                onChange={(e) => setSku(e.target.value)} />
-            <input type="text" 
-                placeholder="Nome do produto" 
-                onChange={(e) => setItemName(e.target.value)} />
-            <input type="text" 
-                placeholder="Preço do produto (R$)" 
-                onChange={(e) => setPrice1(e.target.value)} />
-            <input type="text" 
-                placeholder="QR Code" 
-                onChange={(e) => setQrCode(e.target.value)} />
-            <input type="text" 
-                placeholder="Código do produto" 
-                onChange={(e) => setEan(e.target.value)} />
-            {/* file handler */}
-            <input type="file" 
-                placeholder="Imagem do produto" 
-                onChange={(e) => handleImage(e.target.files![0])} />
-            {/* Promoção Handler */}
-            <>
-                <div className={style.promocao}>
-                    <label htmlFor="">Preço promocional</label>
-                    <input type="checkbox"
-                        className={style.checkbox} 
-                        checked={promo}
-                        onChange={(e) => setPromo(!promo)} />
+        <form onSubmit={handleSubmit}>
+            <div className={style.formContainer}>
+                <div className={style.form}>
+                    <div className={style.side}>
+                        <input type="text" 
+                            placeholder="ID da Etiqueta" 
+                            onChange={(e) => setSku(e.target.value)} />
+                        <input type="text" 
+                            placeholder="Nome do produto" 
+                            onChange={(e) => setItemName(e.target.value)} />
+                        <input type="text" 
+                            placeholder="Preço do produto (R$)" 
+                            onChange={(e) => setPrice1(e.target.value)} />
+                        <input type="text" 
+                            placeholder="QR Code" 
+                            onChange={(e) => setQrCode(e.target.value)} />
+                        <input type="text" 
+                            placeholder="Código do produto" 
+                            onChange={(e) => setEan(e.target.value)} />
+                        {/* Promoção Handler */}
+                        <>
+                            <div className={style.promocao}>
+                                <label htmlFor="">Preço promocional</label>
+                                <input type="checkbox"
+                                    className={style.checkbox} 
+                                    checked={promo}
+                                    onChange={(e) => setPromo(!promo)} />
+                            </div>
+                            <input type="text" 
+                                placeholder='Preço do Produto Promocional'
+                                value={price2}
+                                disabled={!promo}
+                                onChange={(e) => setPrice2(e.target.value)}/>
+                        </>
+                    </div>
+                    <div className={style.side}>
+                        {/* file handler */}
+                        <FileBase64 setImage={setRsrvBlob} />
+                        {/* <div className="message">
+                            {message ? <p>{message}</p> : null}
+                        </div> */}
+                    </div>
                 </div>
-                <input type="text" 
-                    placeholder='Preço do Produto Promocional'
-                    value={price2}
-                    disabled={!promo}
-                    onChange={(e) => setPrice2(e.target.value)}/>
-            </>
-            {/* Submit */}
-            <button type='submit' className='button'>Atualizar Etiqueta</button>
-            <p>{message}</p>
-            {/* <div className="message">
-                {message ? <p>{message}</p> : null}
-            </div> */}
+                <button type='submit' className='button'>Atualizar Etiqueta</button>
+                <p>{message}</p>
+            </div>
         </form>
     )
 }
