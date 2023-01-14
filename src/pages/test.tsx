@@ -49,7 +49,10 @@ export default function Test() {
         const socketUrl = process.env.NEXT_PUBLIC_URL_SOCKET + EVENTS.NAMESPACE.CLIENT
         const newSocket = io(socketUrl)
         setSocket(newSocket)
-    }, [socket])
+        return () => {
+            socket?.disconnect
+        }
+    }, [setSocket])
 
     return (
         socket ? 

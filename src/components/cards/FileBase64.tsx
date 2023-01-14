@@ -1,3 +1,4 @@
+import { IMG } from "@data/defines"
 import { ChangeEvent, Dispatch, ImgHTMLAttributes, SetStateAction, useReducer, useRef, useState } from "react"
 import style from './FileBase64.module.css'
 
@@ -9,7 +10,7 @@ const MaxBase64Length = 65000
 const MaxSizeInBytes = Math.ceil( MaxBase64Length / 4) * 3
 
 export default function FileBase64({ setImage }: TProps) {
-    const [compressedImage, setCompressedImage] = useState('')
+    const [compressedImage, setCompressedImage] = useState(IMG.ELGIN_DEV_COM)
     const [compressedSize, setCompressedSize] = useState('0')
     const [originalSize, setOriginalSize] = useState('0')
     
@@ -121,18 +122,23 @@ export default function FileBase64({ setImage }: TProps) {
     }
 
     return (
-        <div>
+        <div className={style.container}>  
             <input 
+                className={style.file}
                 type="file"     
                 accept="image/*"
                 onChange={uploadFile}
                 name="img" 
                 id="img" 
             />
+            <label htmlFor="img" className={style.btn}>
+                <span>Selecionar Imagem</span>
+            </label>
+
             <div className={style.img}>
                 <img id='compressedImage' src={compressedImage} />
             </div>
-            <table>
+            <table className={style.table}>
                 <tr>
                     <td>Original Size:</td>
                     <td>{originalSize}</td>

@@ -6,7 +6,7 @@ export default async function sendData(productInfo: string) {
         'storeCode': process.env.HANSHOW_STORE_CODE,
         'customerStoreCode': process.env.HANSHOW_STORE,
         'batchNo': '202004091103',
-        'items': [ productInfo ]
+        'items': [ JSON.parse(productInfo) ]
     }
     
     const res = await fetch(process.env.HANSHOW_URL!, {

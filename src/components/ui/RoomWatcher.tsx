@@ -285,7 +285,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 <div className={style.side}>
                     <h3 className={style.title}>Informações da Etiqueta</h3>
 
-                    <FormESL />
+                    <FormESL token={token} />
 
                 </div>
 
