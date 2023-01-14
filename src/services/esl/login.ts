@@ -2,5 +2,5 @@
 
 export function login() {
 
-    const res = await fetch(process.env.HANSHOW_URL_LOGIN, {})
+    // const res = await fetch(process.env.HANSHOW_URL_LOGIN, {})
 }
