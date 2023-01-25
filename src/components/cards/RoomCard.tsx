@@ -22,6 +22,7 @@ function RoomCard({ room, setSelectedRoom }: { room: TRoom, setSelectedRoom: Dis
                 alt={room.room.roomName} 
                 width={200} 
                 height={200} 
+                priority
             />
             <h4>
                 {!room.room.title ? 'Em preparação' : room.room.title}

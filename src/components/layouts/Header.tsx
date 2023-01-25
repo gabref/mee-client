@@ -26,7 +26,7 @@ function Header() {
             <div className={style.container}>
                 <nav className={style.nav}>
                     <Link href={''} >
-                        <Image src={'/elgin-logo.gif'} alt={'Elgin Logo'} width={94} height={40} />
+                        <Image src={'/elgin-logo.gif'} alt={'Elgin Logo'} width={94} height={40} priority />
                     </Link>
 
                     <input type="checkbox" className={style.menuIcon} onClick={handleShowBar}/>
