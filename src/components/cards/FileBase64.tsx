@@ -139,14 +139,16 @@ export default function FileBase64({ setImage }: TProps) {
                 <img id='compressedImage' src={compressedImage} />
             </div>
             <table className={style.table}>
-                <tr>
-                    <td>Original Size:</td>
-                    <td>{originalSize}</td>
-                </tr>
-                <tr>
-                    <td>Compressed Size:</td>
-                    <td>{compressedSize}</td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Original Size:</td>
+                        <td>{originalSize}</td>
+                    </tr>
+                    <tr>
+                        <td>Compressed Size:</td>
+                        <td>{compressedSize}</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     )
