@@ -134,6 +134,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                         case 'failed':
                         case 'disconnected':
                             closeVideo()
+                            alert('Não foi possível conectar o seu vídeo, tente novamente mais tarde')
                             setTimeout(() => handleBackButton(), 2000)
                             break
                         default: break
