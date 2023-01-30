@@ -43,6 +43,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
             user: {
                 name: userState.nome,
                 socketId: socket.id,
+                id: userState.id,
                 expirationTime: new Date().getTime()
             },
             room: {
@@ -56,12 +57,22 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         socket.emit(EVENTS.CLIENT.JOIN, { room: newRoom }, 
             function(callback: number) {
                 if (callback != CODE.ROOM.OK) {
-                    console.log('something Went wrong', callback)
-                    handleBackButton()
+                    switch(callback) {
+                        case CODE.USER.ALREADY_IN_ROOM: 
+                            alert('User already in a room' + callback)
+                            handleBackButton()
+                            break
+                        default:
+                            console.log('something Went wrong', callback)
+                            handleBackButton()
+                            break
+                    }
                     return
                 }
             socket.emit(EVENTS.CLIENT.JOINED, room.room.roomName)
             socket.emit(EVENTS.CLIENT.WATCHER, room.room.roomName )
+
+            getEslToken()
         })
     }
 
@@ -255,8 +266,6 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
             console.log('Got Error: ' + err)
         }
     }
-
-    getEslToken()
 
     return (
         <>

@@ -29,5 +29,6 @@ export type TRoomInfo = {
 export type TUser = {
     socketId: string,
     name: string,    
+    id: string,
     expirationTime: number
 }

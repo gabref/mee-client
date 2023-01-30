@@ -62,6 +62,9 @@ const CODE = {
     SOCKET: {
         OK: 0,
         DOESNT_EXISTS: -4,
+    },
+    USER: {
+        ALREADY_IN_ROOM: -5
     }
 }
 

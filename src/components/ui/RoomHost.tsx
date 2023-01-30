@@ -78,6 +78,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
             broadcaster: {
                 name: iRoom.broadcaster.name,
                 socketId: iRoom.broadcaster.socketId,
+                id: iRoom.broadcaster.id
             },
             room: {
                 roomName: iRoom.room.roomName,
@@ -357,7 +358,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         function onUnjoined(roomName: string) {
             if (roomName != iRoom.room.roomName) return
             setBeingUsed(false)
-            setUserInfo({ name: 'default', socketId: '', expirationTime: 0 })
+            setUserInfo({ name: 'default', socketId: '', id: 'default', expirationTime: 0 })
         }
 
         // on mount, check if room is ready

@@ -34,7 +34,8 @@ function RoomHostList({ socket }: { socket: Socket }) {
             },
             broadcaster: {
                 name: userState ? userState.nome : 'admin',
-                socketId: socket.id
+                socketId: socket.id,
+                id: userState ? userState.id : 'default'
             },
             user: null
         }
