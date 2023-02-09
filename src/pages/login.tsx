@@ -1,4 +1,6 @@
 import { cnpjMask, cpfMask } from '@utils/mask'
+import { GetServerSideProps } from 'next'
+import { parseCookies } from 'nookies'
 import { FormEvent, useContext, useState } from 'react'
 import { AuthContext } from 'src/contexts/AuthContext'
 import style from '../styles/Login.module.css'
@@ -67,4 +69,22 @@ export default function Login() {
             </form>
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const cookies = parseCookies(ctx)
+
+    if (cookies['mee.token-auth']) {
+        return {
+            redirect: {
+                destination: '/rooms',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {}
+    }
+
 }

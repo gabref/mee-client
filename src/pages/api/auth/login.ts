@@ -19,8 +19,9 @@ export default async function handler( req: NextApiRequest, res: NextApiResponse
         // verify password
     
         // autenticate user
-        const token = sign({ id: userInfo.id }, process.env.JWT_PASS ?? '', {
-            expiresIn: AUTH.API.TIME_EXPIRATION
+        const token = sign({ id: userInfo.id, roles: userInfo.roles }, process.env.JWT_PASS ?? '', {
+            expiresIn: AUTH.API.TIME_EXPIRATION,
+            
         })
     
         return res.status(200).json({ token: token, user: userInfo })
