@@ -49,6 +49,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 name: userState.nome,
                 socketId: socket.id,
                 id: userState.id,
+                kicked: false,
                 expirationTime: new Date().getTime()
             },
             room: {

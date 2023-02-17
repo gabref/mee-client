@@ -91,8 +91,12 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                 ready: iRoom.room.ready,
                 available: available
             },
-            user: available ? null : userInfo
+            user: available ? null : {
+                ...userInfo,
+                kicked: true
+            } as TUser
         }
+
         socket.emit(EVENTS.ADMIN.TOGGLE_AVAILABLE, { availableRoom: availableRoom }, function (callback: TRoom) {
             setIRoom(callback)
         })
@@ -374,7 +378,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         function onUnjoined(roomName: string) {
             if (roomName != iRoom.room.roomName) return
             setBeingUsed(false)
-            setUserInfo({ name: 'default', socketId: '', id: 'default', expirationTime: 0 })
+            setUserInfo({ name: 'default', socketId: '', id: 'default', expirationTime: 0, kicked: false })
         }
 
         // on mount, check if room is ready
