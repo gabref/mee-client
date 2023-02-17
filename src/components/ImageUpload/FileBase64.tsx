@@ -1,5 +1,7 @@
+import Modal from "@components/Modals/AlertModal/AlertModal"
 import { IMG } from "@data/defines"
-import { ChangeEvent, Dispatch, ImgHTMLAttributes, SetStateAction, useReducer, useRef, useState } from "react"
+import useModal from "@hooks/useModal"
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
 import style from './FileBase64.module.css'
 
 type TProps = {
@@ -13,6 +15,8 @@ export default function FileBase64({ setImage }: TProps) {
     const [compressedImage, setCompressedImage] = useState(IMG.ELGIN_DEV_COM)
     const [compressedSize, setCompressedSize] = useState('0')
     const [originalSize, setOriginalSize] = useState('0')
+
+    const { isOpen, setIsOpen, toggle } = useModal()
     
     function convertFileBase64 (file: Blob) : Promise<string> {
         return new Promise((resolve, reject)  => {
@@ -96,7 +100,7 @@ export default function FileBase64({ setImage }: TProps) {
             let compressedFile: File
 
             if (file.size > MaxSizeInBytes) {
-                alert('O arquivo da imagem deve ser menos que 47,61KB, aguarde a compressão da imagem para um tamanho adequado')
+                setIsOpen(true)
                 compressedFile = await compressImage(file, {
                     quality: 0.5,
                     resizingFactor: 0.9
@@ -134,6 +138,14 @@ export default function FileBase64({ setImage }: TProps) {
             <label htmlFor="img" className={style.btn}>
                 <span>Selecionar Imagem</span>
             </label>
+            <Modal 
+                isOpen={isOpen}
+                toggle={toggle}
+                title={'Aguarde'}
+                description={'O arquivo da imagem deve ser menos que 47,61KB, aguarde a compressão da imagem para um tamanho adequado'} 
+                cta={'OK'} 
+                ctaAction={toggle}
+            />
 
             <div className={style.img}>
                 <img id='compressedImage' src={compressedImage} />
