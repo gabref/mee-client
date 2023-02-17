@@ -307,7 +307,9 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 className={`${style.back} `}
                 onClick={handleBackButton}
             >Voltar</span> 
-            <Timer />
+            <div className={style.timer}>
+                <Timer initialMinutes={30} showNumbers />
+            </div>
 
             <div className={style.section}>
 

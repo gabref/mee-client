@@ -1,10 +1,6 @@
 .timer {
-    float: right;
-    width: 30%;
     color: var(--gray);
-    margin-top: -1rem;
-    margin-bottom: 1rem;
-
     display: flex;
     flex-direction: column;
+    width: 100%;
 }

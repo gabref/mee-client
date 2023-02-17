@@ -10,7 +10,7 @@
 .childDiv {
     height: 100%;
     border-radius: 8px;
-    background-color: var(--gray);
+    background-color: var(--gray-light);
     text-align: right;
     transition: width 1s ease-in-out;
 }

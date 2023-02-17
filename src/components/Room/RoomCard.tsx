@@ -1,3 +1,4 @@
+import Timer from "@components/Timer/Timer"
 import { TRoom } from "@customTypes/types"
 import Image from "next/image"
 import { Dispatch, SetStateAction } from "react"
@@ -8,6 +9,12 @@ function RoomCard({ room, setSelectedRoom }: { room: TRoom, setSelectedRoom: Dis
     function handleClick() {
         if (!room.room.available) return
         setSelectedRoom(room)
+    }
+
+    function timeDiffInMinutes(expirationDateInMilliseconds: number) {
+        const currentDateInMilliseconds = new Date().getTime()
+        const timeDiffInMilliseconds = expirationDateInMilliseconds - currentDateInMilliseconds
+        return Math.floor(timeDiffInMilliseconds / (1000 * 60))
     }
 
     return (
@@ -32,6 +39,14 @@ function RoomCard({ room, setSelectedRoom }: { room: TRoom, setSelectedRoom: Dis
                     (room.room.available ? 'Sala Disponível' : 
                         (room.user ? 'Em uso' : 'Aguarde...')) : 'Aguarde...'}
             </span>
+            <div className={style.timer}>
+                { (!room.room.available && room.user?.expirationTime ) && (
+                    <>
+                        <Timer initialMinutes={timeDiffInMinutes(room.user?.expirationTime)} />
+                        { console.log(timeDiffInMinutes(room.user?.expirationTime))}
+                    </>
+                )}
+            </div>
         </div>
     )
 }

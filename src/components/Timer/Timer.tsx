@@ -6,8 +6,16 @@ import Router from "next/router"
 
 const ONE_SECOND = 1000 // milliseconds
 
-function Timer() {
-    const [minutes, setMinutes] = useState(30)
+type TimerProps = {
+    initialMinutes?: number,
+    showNumbers?: boolean
+}
+
+function Timer({ initialMinutes, showNumbers = false }: TimerProps) {
+
+    initialMinutes = Math.min((initialMinutes || 30), 30)
+
+    const [minutes, setMinutes] = useState(Math.min(initialMinutes, 30))
     const [seconds, setSeconds] = useState(0)
 
     useEffect(() => {
@@ -27,7 +35,9 @@ function Timer() {
 
     return (
         <div className={style.timer}>
-            <TimerValues minutes={minutes} seconds={seconds} />
+            { showNumbers && (
+                <TimerValues minutes={minutes} seconds={seconds} />
+            )}
             <ProgressBar percentage={minutes * (10/3)} />
         </div>
     )
