@@ -3,8 +3,8 @@ import { io, Socket } from 'socket.io-client';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 
-import RoomWatcher from '@components/ui/RoomWatcher';
-import RoomWatcherList from '@components/ui/RoomWatcherList';
+import RoomWatcher from '@components/Room/RoomWatcher';
+import RoomWatcherList from '@components/RoomsList/RoomWatcherList';
 import { TRoom } from '@customTypes/types';
 import { AuthContext } from 'src/contexts/AuthContext';
 import { EVENTS } from '@data/events';

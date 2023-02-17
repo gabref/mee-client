@@ -1,0 +1,53 @@
+.title {
+    margin: 16px 0;
+}
+
+.section {
+    width: 100%;
+    display: flex;
+}
+
+.sectionDescription {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.side {
+    width: 50%;
+}
+
+.back {
+    float: left;
+    color: var(--gray);
+    margin-left: -1.5rem;
+    margin-top: -1.5rem;
+    cursor: pointer;
+    padding: .5rem;
+}
+
+.videoContainer {
+    overflow: hidden;
+    width: 80%;
+}
+
+.video {
+    margin-top: -30px;
+    width: 100%;
+}
+
+.description {
+    margin: 40px 0 20px;
+    width: 100%;
+    overflow-wrap: break-word;
+}
+
+@media screen and (max-width: 600px) {
+    .section {
+        flex-direction: column;
+    }
+    .side {
+        width: 100%;
+        align-items: center;
+    }
+}

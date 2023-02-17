@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 import decode from 'jwt-decode'
 
-import RoomHostList from '@components/ui/RoomHostList';
+import RoomHostList from '@components/RoomsList/RoomHostList';
 import { AuthContext } from 'src/contexts/AuthContext';
 import { EVENTS } from '@data/events';
 

@@ -1,4 +1,4 @@
-import RoomWatcher from "@components/ui/RoomWatcher";
+import RoomWatcher from "@components/Room/RoomWatcher";
 import { TRoom } from "@customTypes/types";
 import { EVENTS } from "@data/events";
 import { useEffect, useState } from "react";
@@ -10,7 +10,8 @@ export default function Test() {
 	const [ selectedRoom, setSelectedRoom ] = useState<TRoom | null>({
         broadcaster: {
             name: '',
-            socketId: ''
+            socketId: '',
+            id: ''
         },
         room: {
             available: true,
@@ -22,13 +23,15 @@ export default function Test() {
         user: {
             expirationTime: new Date().getTime(),
             name: '',
-            socketId: ''
+            socketId: '',
+            id: ''
         }
     });
-    const randomRoom = {
+    const randomRoom: TRoom = {
         broadcaster: {
             name: '',
-            socketId: ''
+            socketId: '',
+            id: ''
         },
         room: {
             available: true,
@@ -40,7 +43,8 @@ export default function Test() {
         user: {
             expirationTime: new Date().getTime(),
             name: '',
-            socketId: ''
+            socketId: '',
+            id: ''
         }
     } 
 

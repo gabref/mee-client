@@ -1,4 +1,4 @@
-import Header from "@components/layouts/Header";
+import Header from "@components/Header/Header";
 import style from './Layout.module.css'
 
 const isAdmin = true
