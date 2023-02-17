@@ -1,9 +1,25 @@
 import FileBase64 from '@components/ImageUpload/FileBase64'
+import Modal from '@components/Modals/AlertModal/AlertModal'
 import { IMG } from '@data/defines'
+import useModal from '@hooks/useModal'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import style from './FormESL.module.css'
 
+type ModalParams = {
+    title: string, 
+    message: string, 
+    error?: boolean
+}
+
 function FormESL({ token }: { token: string }) {
+    const { isOpen, toggleModal } = useModal()
+    const [modal, setModal] = useState({ message: '', title: '', error: false })
+
+    function handleToggleModal ({ title, message, error = false }: ModalParams) {
+        setModal({ title, message, error })
+        toggleModal()
+    }
+
     const [sku, setSku] = useState('')
     const [itemName, setItemName] = useState('')
     const [price1, setPrice1] = useState('')
@@ -101,15 +117,34 @@ function FormESL({ token }: { token: string }) {
                     setRsrvBlob('')
                     setEan('')
                     setMessage('Envio feito com sucesso')
+                    handleToggleModal({
+                        title: 'Sucesso', 
+                        message: 'Envio feito com sucesso! Aguarde cerca de 40 segundos para visualizar as alterações na etiqueta no vídeo ao lado.'
+                    })
                 } else {
                     setMessage('Ocorreu um erro')
+                    handleToggleModal({
+                        title: 'Erro no envio',
+                        message: 'Houve um erro no envio dos dados no form, tente novamente.',
+                        error: true
+                    })
                 }
             } else {
                 setMessage('Ocorreu um erro')
+                handleToggleModal({
+                    title: 'Erro no envio',
+                    message: 'Houve um erro no envio dos dados no form. Saia e entre novamente em uma sala',
+                    error: true
+                })
             }
         } catch (error) {
             console.error(error)
             setMessage('Ocorreu um erro')
+            handleToggleModal({
+                title: 'Erro no envio',
+                message: 'Deu erro na matrix',
+                error: true
+            })
         }
     }
 
@@ -135,7 +170,7 @@ function FormESL({ token }: { token: string }) {
                             value={qrCode}
                             onChange={handleQRCodeChange} />
                         <input type="text" 
-                            placeholder="Código do produto" 
+                            placeholder="Código de barras do produto (EAN)" 
                             value={ean}
                             onChange={handleEanChange} />
                         {/* Promoção Handler */}
@@ -169,6 +204,18 @@ function FormESL({ token }: { token: string }) {
                 <button type='submit' className={`button ${style.btn}`} >Atualizar Etiqueta</button>
                 <p>{message}</p>
             </div>
+
+
+            <Modal
+                isOpen={isOpen} 
+                toggle={toggleModal} 
+                title={modal.title}
+                description={modal.message} 
+                cta={'OK'} 
+                ctaAction={toggleModal}
+                error={modal.error}
+            />
+
         </form>
     )
 }
