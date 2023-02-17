@@ -1,6 +1,8 @@
+import Modal from "@components/Modals/AlertModal/AlertModal";
 import RoomWatcher from "@components/Room/RoomWatcher";
 import { TRoom } from "@customTypes/types";
 import { EVENTS } from "@data/events";
+import useModal from "@hooks/useModal";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -58,6 +60,12 @@ export default function Test() {
         }
     }, [setSocket])
 
+    const { isOpen, toggleModal } = useModal()
+    function handleOk () {
+        toggleModal()
+        console.log('ciao')
+    }
+
     return (
         socket ? 
             <RoomWatcher 
@@ -66,7 +74,18 @@ export default function Test() {
                 setSelectedRoom={setSelectedRoom} 
             />
          : (
-            'No socket'
+            <>
+                <button onClick={toggleModal}>open modal</button>
+                <Modal 
+                    isOpen={isOpen} 
+                    toggle={toggleModal} 
+                    title={'Erro na Chamada'}
+                    description={'lorem ipsum jfkdl sjf dlk fjlkdjw kflj wlkjfdw klj fçq dçlwkajc lçkj df alfçkd '} 
+                    cta={'OK'} 
+                    ctaAction={handleOk}
+                    error
+                />
+            </>
         )
     )
 }
