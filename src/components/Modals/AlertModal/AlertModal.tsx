@@ -26,7 +26,10 @@ export default function Modal({
       {isOpen && (
         <div
           className={styles.modalOverlay}
-          onClick={toggle}
+          onClick={() => {
+            toggle()
+            ctaAction()
+          }}
         >
           <div
             className={styles.modalBox}

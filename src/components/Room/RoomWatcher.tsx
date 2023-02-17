@@ -9,6 +9,8 @@ import Timer from '@components/Timer/Timer'
 import { TRoom } from '@customTypes/types'
 import { MEE_URL } from '@data/defines'
 import { CODE, EVENTS } from '@data/events'
+import useModal from '@hooks/useModal'
+import Modal from '@components/Modals/AlertModal/AlertModal'
 
 function RoomWatcher({ socket, room, setSelectedRoom }: 
                      { socket: Socket, room: TRoom, setSelectedRoom: Dispatch<SetStateAction<TRoom | null>> }) {
@@ -18,7 +20,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
     const videoRef = useRef<HTMLVideoElement>(null)
 
     let peerConnection: RTCPeerConnection | null
-    const config = {
+    const config: RTCConfiguration = {
         iceServers: [
             {
                 urls: [
@@ -31,6 +33,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
             }
         ]
     }
+
+    const { isOpen, modal, toggleModal, handleToggleModal } = useModal()
 
     function handleBackButton() {
         setSelectedRoom(null)
@@ -60,12 +64,21 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 if (callback != CODE.ROOM.OK) {
                     switch(callback) {
                         case CODE.USER.ALREADY_IN_ROOM: 
-                            alert('User already in a room' + callback)
-                            handleBackButton()
+                            handleToggleModal({
+                                title: 'Usuário Duplo',
+                                message: 'Seu usuário já está utilizando uma sala',
+                                error: true
+                            })
+                            setTimeout(() => handleBackButton(), 1000 * 10)
                             break
                         default:
                             console.log('something Went wrong', callback)
-                            handleBackButton()
+                            handleToggleModal({
+                                title: 'Erro',
+                                message: 'Ocorreu um erro no evento `client:join`: ' + callback,
+                                error: true
+                            })
+                            setTimeout(() => handleBackButton(), 1000 * 10)
                             break
                     }
                     return
@@ -146,8 +159,12 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                         case 'failed':
                         case 'disconnected':
                             closeVideo()
-                            alert('Não foi possível conectar o seu vídeo, tente novamente mais tarde')
-                            setTimeout(() => handleBackButton(), 2000)
+                            handleToggleModal({
+                                title: 'Erro de Vídeo',
+                                message: 'Não foi possível conectar o seu vídeo, tente novamente mais tarde',
+                                error: true
+                            })
+                            setTimeout(() => handleBackButton(), 1000 * 10)
                             break
                         default: break
                     }
@@ -196,19 +213,34 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
 
         function onDeleteRoom() {
             closeVideo()
-            setTimeout(() => handleBackButton(), 2000)
+            handleToggleModal({
+                title: 'Sala Removida',
+                message: 'Essa sala foi removida pelo Host. Você será redirecionado para a página de salas',
+                error: true
+            })
+            setTimeout(() => handleBackButton(), 1000 * 5)
         }
 
         function onDisconnectPeer() {
             closeVideo()
-            setTimeout(() => handleBackButton(), 2000);
+            handleToggleModal({
+                title: 'Conexão Peer Removida',
+                message: 'A conexão Peer to Peer webrtc e de websockets da sua sala foi removida. Você será redirecionado para a página de salas',
+                error: true
+            })
+            setTimeout(() => handleBackButton(), 1000 * 5);
         }
 
         function onEndBroadcast() {
             // só pra avisar o usuário
             console.info('this stream has ended')
             closeVideo()
-            setTimeout(() => handleBackButton(), 2000)
+            handleToggleModal({
+                title: 'Stream Interrompido',
+                message: 'Parece que o Host da sua sala indisponibilizou essa sala. Você será redirecionado para a página de salas',
+                error: true
+            })
+            setTimeout(() => handleBackButton(), 1000 * 5)
         }
 
         function onDisconnect(reason: string) {
@@ -319,6 +351,16 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                     <span>A documentação de uso da API está em nosso <a href={'https://github.com/ElginDeveloperCommunity/Equipamentos/tree/master/Elgin/Etiqueta%20Eletr%C3%B4nica/Documenta%C3%A7%C3%A3o'} target={'_blank'}>GitHub.</a></span>
                 </div>
             </div>
+
+            <Modal
+                isOpen={isOpen} 
+                toggle={toggleModal} 
+                title={modal.title}
+                description={modal.message} 
+                cta={'OK'} 
+                ctaAction={handleBackButton}
+                error={modal.error}
+            />
         </>
     )
 }

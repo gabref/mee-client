@@ -16,7 +16,7 @@ export default function FileBase64({ setImage }: TProps) {
     const [compressedSize, setCompressedSize] = useState('0')
     const [originalSize, setOriginalSize] = useState('0')
 
-    const { isOpen, setIsOpen, toggle } = useModal()
+    const { isOpen, handleToggleModal, modal, toggleModal } = useModal()
     
     function convertFileBase64 (file: Blob) : Promise<string> {
         return new Promise((resolve, reject)  => {
@@ -100,7 +100,10 @@ export default function FileBase64({ setImage }: TProps) {
             let compressedFile: File
 
             if (file.size > MaxSizeInBytes) {
-                setIsOpen(true)
+                handleToggleModal({
+                    title: 'Aguarde',
+                    message: 'O arquivo da imagem deve ser menos que 47,61KB, aguarde a compressão da imagem para um tamanho adequado'
+                })
                 compressedFile = await compressImage(file, {
                     quality: 0.5,
                     resizingFactor: 0.9
@@ -138,14 +141,6 @@ export default function FileBase64({ setImage }: TProps) {
             <label htmlFor="img" className={style.btn}>
                 <span>Selecionar Imagem</span>
             </label>
-            <Modal 
-                isOpen={isOpen}
-                toggle={toggle}
-                title={'Aguarde'}
-                description={'O arquivo da imagem deve ser menos que 47,61KB, aguarde a compressão da imagem para um tamanho adequado'} 
-                cta={'OK'} 
-                ctaAction={toggle}
-            />
 
             <div className={style.img}>
                 <img id='compressedImage' src={compressedImage} />
@@ -162,6 +157,15 @@ export default function FileBase64({ setImage }: TProps) {
                     </tr>
                 </tbody>
             </table>
+
+            <Modal 
+                isOpen={isOpen}
+                toggle={toggleModal}
+                title={modal.title}
+                description={modal.message} 
+                cta={'OK'} 
+                ctaAction={toggleModal}
+            />
         </div>
     )
 }
