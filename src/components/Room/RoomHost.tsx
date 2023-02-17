@@ -1,6 +1,8 @@
+import Modal from '@components/Modals/AlertModal/AlertModal'
 import { TRoom, TRoomInfo, TUser } from '@customTypes/types'
 import { CODE, EVENTS } from '@data/events'
 import { IMAGES } from '@data/imagesConfig'
+import useModal from '@hooks/useModal'
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import style from './RoomHost.module.css'
@@ -9,6 +11,8 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                   { room: TRoom, socket: Socket, 
                     setRooms: Dispatch<SetStateAction<TRoom[]>>
                     peerConnections: Map<string, RTCPeerConnection | null> }) {
+
+    const { isOpen, toggleModal, modal, handleToggleModal } = useModal()
 
     const [inputOk, setInputOk] = useState(true)
     const [inputMessage, setInputMessage] = useState('')
@@ -126,14 +130,26 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         console.error(`[${new Date().toLocaleDateString()}] Error ${err.name}: ${err.message}`)
         switch(err.name) {
             case 'NotFoundError':
-                alert('Unable to open your video because no camera was found.')
+                handleToggleModal({
+                    title: 'Video Error',
+                    message: 'Unable to open your video because no camera was found.',
+                    error: true
+                })
                 break
             case 'SecurityError':
             case 'PermissionDeniedError':
-                alert('For the application to work, you need to accept the video permisisons')
+                handleToggleModal({
+                    title: 'Video Error',
+                    message: 'For the application to work, you need to accept the video permisisons',
+                    error: true
+                })
                 break
             default:
-                alert('Error opening your camera...' + err.message)
+                handleToggleModal({
+                    title: 'Video Error',
+                    message: 'Error opening your camera...' + err.message,
+                    error: true
+                })
                 break
         }
         // make sure shuts down the host end of the RTCPeerConnection so is ready to try again
@@ -496,6 +512,17 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
                     </div>
                 </div>
             </div>
+
+
+            <Modal
+                isOpen={isOpen} 
+                toggle={toggleModal} 
+                title={modal.title}
+                description={modal.message} 
+                cta={'OK'} 
+                ctaAction={toggleModal}
+                error={modal.error}
+            />
         </>
     )
 }
