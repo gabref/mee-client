@@ -5,20 +5,11 @@ import useModal from '@hooks/useModal'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import style from './FormESL.module.css'
 
-type ModalParams = {
-    title: string, 
-    message: string, 
-    error?: boolean
-}
-
 function FormESL({ token }: { token: string }) {
-    const { isOpen, toggleModal } = useModal()
-    const [modal, setModal] = useState({ message: '', title: '', error: false })
-
-    function handleToggleModal ({ title, message, error = false }: ModalParams) {
-        setModal({ title, message, error })
-        toggleModal()
-    }
+    const { isOpen, 
+            toggleModal, 
+            modal, 
+            handleToggleModal } = useModal()
 
     const [sku, setSku] = useState('')
     const [itemName, setItemName] = useState('')
