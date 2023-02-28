@@ -41,7 +41,7 @@ function AuthProvider({ children }: any) {
     async function recoverUserInfo (token: string) {
         const statusCodeOk = [200, 304]
         try {
-            const res = await fetch(MEE_URL.API + '/auth/verify', {
+            const res = await fetch(process.env.NEXT_PUBLIC_URL_SOCKET + '/api/auth/verify', {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -66,7 +66,7 @@ function AuthProvider({ children }: any) {
         })
         if (user) setUserState(user)
 
-        if (user.roles.indexOf('host') != -1){
+        if (user.roles.indexOf('host') !== -1){
             Router.push('/admin/rooms')
         }
         else
@@ -74,9 +74,13 @@ function AuthProvider({ children }: any) {
     }
 
     async function signInRequest(docNumber: string) {
-        const res = await fetch(MEE_URL.API + '/auth/login', {
+        const data = { doc: docNumber }
+        const res = await fetch( process.env.NEXT_PUBLIC_URL_SOCKET + '/api/auth/login', {
+            headers: {
+                'Content-Type': 'application/json'
+            },
             method: 'POST',
-            body: JSON.stringify({ doc: docNumber })
+            body: JSON.stringify(data)
         })
         if (res.status != 200)
             throw new Error('SignIn Request Error = statusCode ' + res.status)

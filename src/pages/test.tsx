@@ -26,7 +26,8 @@ export default function Test() {
             expirationTime: new Date().getTime(),
             name: '',
             socketId: '',
-            id: ''
+            id: '',
+            kicked: false
         }
     });
     const randomRoom: TRoom = {
@@ -46,7 +47,8 @@ export default function Test() {
             expirationTime: new Date().getTime(),
             name: '',
             socketId: '',
-            id: ''
+            id: '',
+            kicked: false
         }
     } 
 
