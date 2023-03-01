@@ -1,9 +1,9 @@
 export type TDBUser = {
     id: string,
     doc: string,
-    nome: string,
-    nomeFantasia: string,
-    telefone: string
+    name: string,
+    businessName: string,
+    phoneNumber: string
     email: string,
     roles: string[]
 }

@@ -46,7 +46,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         const newRoom: TRoom  = {
             broadcaster: room.broadcaster,
             user: {
-                name: userState.nome,
+                name: userState.name,
                 socketId: socket.id,
                 id: userState.id,
                 kicked: false,

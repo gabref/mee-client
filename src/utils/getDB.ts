@@ -25,12 +25,12 @@ export async function getDBData (userDoc: string | string[], searchWhere: string
     const {
         'Id': id,
         'Documento': doc,
-        'Nome': nome,
-        'NomeFantasia': nomeFantasia,
+        'Nome': name,
+        'NomeFantasia': businessName,
         'Email': email,
-        'Telefone': telefone
+        'Telefone': phoneNumber
     } = JSON.parse(JSON.stringify(data))[0]
-    return { id, doc, nome, nomeFantasia, email, telefone, roles: ['user'] }
+    return { id, doc, name, businessName, email, phoneNumber, roles: ['user'] }
 }
 
 const host = {
@@ -40,10 +40,10 @@ const host = {
     values: {
         id: '999.999.999-99', 
         doc: '999.999.999-99',
-        nome: 'Host',
-        nomeFantasia: 'Host Broadcaster',
+        name: 'Host',
+        businessName: 'Host Broadcaster',
         email: 'host@host.com',
-        telefone: '123213213',
+        phoneNumber: '123213213',
         roles: ['host']
     }
 }

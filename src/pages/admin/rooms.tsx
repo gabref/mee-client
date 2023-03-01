@@ -38,7 +38,7 @@ function AdminRooms() {
             { userState ? (
                 userState?.roles.indexOf('host')! == -1 ? (
                     <div>
-                        <p>{userState.nome}</p>
+                        <p>{userState.name}</p>
                         <p>Você não tem acesso a essa página!</p>
                     </div>
                 ) : (

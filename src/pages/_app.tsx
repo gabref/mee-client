@@ -1,8 +1,8 @@
-import '../styles/globals.css'
+import { GoogleAnalytics } from 'nextjs-google-analytics'
 import type { AppProps } from 'next/app'
+import '../styles/globals.css'
 import { AuthProvider } from 'src/contexts/AuthContext'
 import Layout from '@components/Layouts/Layout'
-import { GoogleAnalytics } from 'nextjs-google-analytics'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
