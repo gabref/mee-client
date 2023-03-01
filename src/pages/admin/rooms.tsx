@@ -26,7 +26,10 @@ function AdminRooms() {
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
 
+			const pingInterval = setInterval(() => socket?.emit('ping'), 1000)
+
 			return () => {
+				clearInterval(pingInterval)
 				newSocket.close();
 			};
 		},
