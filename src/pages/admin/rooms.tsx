@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 import decode from 'jwt-decode'
@@ -8,7 +8,7 @@ import RoomHostList from '@components/RoomsList/RoomHostList';
 import { AuthContext } from 'src/contexts/AuthContext';
 import { EVENTS } from '@data/events';
 
-const SOCKET_CONFIG = {
+const SOCKET_CONFIG: Partial<ManagerOptions | SocketOptions> = {
 	reconnectionAttempts: 5,
 	reconnectionDelay: 1000,
 	autoConnect: true,

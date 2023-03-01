@@ -217,10 +217,13 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
             peerConnection.onicecandidate = null
             peerConnection.onnegotiationneeded = null
             // stop all transceivers on the connection
-            console.log(peerConnection.getTransceivers())
-            peerConnection.getTransceivers().forEach(transceiver => {
-                transceiver.stop()
-            })
+            console.log(peerConnection.connectionState)
+            if (peerConnection.connectionState !== 'closed') {
+                console.log(peerConnection.getTransceivers())
+                peerConnection.getTransceivers().forEach(transceiver => {
+                    transceiver.stop()
+                })
+            }
             // stop the webcam preview as well by pausing the <video> element,
             // then stopping each of the getUserMedia() tracks on it
             if (videoRef.current?.srcObject) {
@@ -363,7 +366,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         }
 
         function onDisconnect(reason: string) {
-            console.log(reason)
+            console.log('disconnected', reason)
             closeVideo(undefined, iRoom.room.roomName)
         }
 
