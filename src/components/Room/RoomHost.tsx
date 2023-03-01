@@ -217,7 +217,6 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
             peerConnection.onicecandidate = null
             peerConnection.onnegotiationneeded = null
             // stop all transceivers on the connection
-            console.log(peerConnection.connectionState)
             if (peerConnection.connectionState !== 'closed') {
                 console.log(peerConnection.getTransceivers())
                 peerConnection.getTransceivers().forEach(transceiver => {
@@ -412,10 +411,10 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
 
         navigator.mediaDevices.addEventListener('devicechange', onDeviceChanges)
 
-        window.onunload = window.onbeforeunload = () => {
-            socket.emit(EVENTS.ADMIN.END, iRoom.room.roomName)
-            socket.disconnect()
-        }
+        // window.onunload = window.onbeforeunload = () => {
+        //     socket.emit(EVENTS.ADMIN.END, iRoom.room.roomName)
+        //     socket.disconnect()
+        // }
 
         return () => {
             socket.off(EVENTS.ADMIN.READY, onReady)
