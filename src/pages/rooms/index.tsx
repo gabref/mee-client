@@ -28,7 +28,10 @@ function Rooms() {
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
 
+			const pingInterval = setInterval(() => {socket?.emit('ping'); console.log('ping')}, 25 * 1000)
+
 			return () => {
+				clearInterval(pingInterval)
 				newSocket.close();
 			};
 		},
