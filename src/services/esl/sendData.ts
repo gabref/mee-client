@@ -20,7 +20,7 @@ export default async function sendData(productInfo: string) {
     })
 
     const resData: any = await res.json()
-    Logger.info(data)
+    // Logger.info(data)
 
     if (resData.hasOwnProperty('itemCount'))
         return true
