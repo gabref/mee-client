@@ -26,10 +26,22 @@ function AdminRooms() {
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
 
-			const pingInterval = setInterval(() => {socket?.emit('ping'); console.log('ping')}, 25 * 1000)
+			window.onunload = window.onbeforeunload = () => {
+			    newSocket.emit(EVENTS.ADMIN.EXIT, userState.id)
+			    newSocket.disconnect()
+			}
+
+			function onConnect() {
+				newSocket.emit(EVENTS.ADMIN.CONNECT, {
+ 					id: userState?.id, 
+					socketId: newSocket.id
+				})
+			}
+
+			newSocket.on(EVENTS.ADMIN.CONNECT, onConnect)
 
 			return () => {
-				clearInterval(pingInterval)
+				newSocket.removeListener(EVENTS.ADMIN.CONNECT, onConnect)
 				newSocket.close();
 			};
 		},

@@ -8,12 +8,14 @@ const EVENTS = {
         CLIENT: '/client'
     },
     ADMIN: {
+        CONNECT: 'admin:on-connect',
         CONNECT_ERROR: 'admin:connect_error',
         START_VIDEO: 'admin:start-video',
         STOP_VIDEO: 'admin:stop-video',
         BROADCASTER: 'admin:broadcaster',
         OFFER: 'admin:offer',
         CANDIDATE: 'admin:candidate',
+        EXIT: 'admin:exit',
         END: 'admin:end',
         EMIT: {
             WATCHER: 'admin:watcher',

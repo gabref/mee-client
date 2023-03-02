@@ -411,11 +411,6 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
 
         navigator.mediaDevices.addEventListener('devicechange', onDeviceChanges)
 
-        // window.onunload = window.onbeforeunload = () => {
-        //     socket.emit(EVENTS.ADMIN.END, iRoom.room.roomName)
-        //     socket.disconnect()
-        // }
-
         return () => {
             socket.off(EVENTS.ADMIN.READY, onReady)
             socket.off(EVENTS.ADMIN.UNREADY, onUnready)
