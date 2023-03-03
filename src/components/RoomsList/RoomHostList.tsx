@@ -3,12 +3,12 @@ import Head from 'next/head'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client'
 import { CODE, EVENTS } from '@data/events'
-import { TRoom } from '@customTypes/types'
+import { TDBUser, TRoom } from '@customTypes/types'
 import { AuthContext } from 'src/contexts/AuthContext'
 import RoomHost from '@components/Room/RoomHost'
 
-function RoomHostList({ socket }: { socket: Socket }) {
-    const { userState } = useContext(AuthContext)
+function RoomHostList({ socket, userState }: { socket: Socket, userState: TDBUser }) {
+    // const { userState } = useContext(AuthContext)
     const [rooms, setRooms] = useState<TRoom[]>([])
     const [inputOk, setInputOk] = useState(true)
     const [message, setMessage] = useState('')
@@ -33,9 +33,9 @@ function RoomHostList({ socket }: { socket: Socket }) {
                 available: false
             },
             broadcaster: {
-                name: userState ? userState.name : 'admin',
+                name: userState.name,
                 socketId: socket.id,
-                id: userState ? userState.id : 'default'
+                id: userState.id
             },
             user: null
         }
@@ -50,11 +50,13 @@ function RoomHostList({ socket }: { socket: Socket }) {
     useEffect(() => {
         function socketConnect() {
             setIsConnected(true)
-            socket.emit(EVENTS.ADMIN.GET_ROOMS, 
-                        { adminSocketId: socket.id },
-                        function(roomsArray: TRoom[]) {
-                            setRooms(roomsArray)
-                        })
+            setTimeout(() => {
+                socket.emit(EVENTS.ADMIN.GET_ROOMS,
+                            { adminSocketId: socket.id },
+                            function(roomsArray: TRoom[]) {
+                                setRooms(roomsArray)
+                            })
+            }, 500)
         }
 
         function onRoomCreated({ roomCode, room }: { roomCode: number, room: TRoom }) {

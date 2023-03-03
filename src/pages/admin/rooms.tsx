@@ -38,11 +38,26 @@ function AdminRooms() {
 				})
 			}
 
-			newSocket.on(EVENTS.ADMIN.CONNECT, onConnect)
+			newSocket.on('connect', onConnect)
+
+			const timeoutSocket = setInterval(() => {
+				newSocket.close()
+			}, 1/2 * 60 * 1000)
+
+			const timeout = setInterval(() => {
+				socket?.close()
+				console.log('closing connection settimeout')
+				const newSocket = io(socketUrl, SOCKET_CONFIG)
+				setSocket(newSocket)
+			}, (1/2 * 60 * 1000) + 3)
+
+			console.log('the page rerendered')
 
 			return () => {
-				newSocket.removeListener(EVENTS.ADMIN.CONNECT, onConnect)
+				newSocket.removeListener('connect', onConnect)
 				newSocket.close();
+				clearInterval(timeout)
+				clearInterval(timeoutSocket)
 			};
 		},
 		[ setSocket, userState ]
@@ -59,7 +74,7 @@ function AdminRooms() {
                 ) : (
                     socket ? (
                         <div>
-                            <RoomHostList socket={socket} />
+                            <RoomHostList socket={socket} userState={userState} />
                         </div>
                     ) : (
                         <p>No socket</p>

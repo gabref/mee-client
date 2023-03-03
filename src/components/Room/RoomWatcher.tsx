@@ -19,6 +19,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
     const [token, setToken] = useState('')
     const videoRef = useRef<HTMLVideoElement>(null)
 
+    const timeouts: NodeJS.Timeout[] = []
+
     let peerConnection: RTCPeerConnection | null
     const config: RTCConfiguration = {
         iceServers: [
@@ -70,7 +72,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                                 message: 'Seu usuário já está utilizando uma sala',
                                 error: true
                             })
-                            setTimeout(() => handleBackButton(), 1000 * 10)
+                            const timeout = setTimeout(() => handleBackButton(), 1000 * 10)
+                            timeouts.push(timeout)
                             break
                         default:
                             console.log('something Went wrong', callback)
@@ -79,7 +82,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                                 message: 'Ocorreu um erro no evento `client:join`: ' + callback,
                                 error: true
                             })
-                            setTimeout(() => handleBackButton(), 1000 * 10)
+                            const timeoutJoin = setTimeout(() => handleBackButton(), 1000 * 10)
+                            timeouts.push(timeoutJoin)
                             break
                     }
                     return
@@ -88,6 +92,19 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
             socket.emit(EVENTS.CLIENT.WATCHER, room.room.roomName )
 
             getEslToken()
+
+            const timeout = setTimeout(() => {
+                if (!peerConnection) {
+                    handleToggleModal({
+                        title: 'Sockets Error',
+                        message: 'Feche a abra novamente a sala!',
+                        error: true
+                    })
+                    const timeout = setTimeout(() => handleBackButton(), 1000 * 10)
+                    timeouts.push(timeout)
+                }
+            }, 10 * 1000)
+            timeouts.push(timeout)
         })
     }
 
@@ -165,7 +182,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                                 message: 'Não foi possível conectar o seu vídeo, tente novamente mais tarde',
                                 error: true
                             })
-                            setTimeout(() => handleBackButton(), 1000 * 10)
+                            const timeout = setTimeout(() => handleBackButton(), 1000 * 10)
+                            timeouts.push(timeout)
                             break
                         default: break
                     }
@@ -219,7 +237,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 message: 'Essa sala foi removida pelo Host. Você será redirecionado para a página de salas',
                 error: true
             })
-            setTimeout(() => handleBackButton(), 1000 * 5)
+            const timeout = setTimeout(() => handleBackButton(), 1000 * 5)
+            timeouts.push(timeout)
         }
 
         function onDisconnectPeer() {
@@ -229,7 +248,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 message: 'A conexão Peer to Peer webrtc e de websockets da sua sala foi removida. Você será redirecionado para a página de salas',
                 error: true
             })
-            setTimeout(() => handleBackButton(), 1000 * 5);
+            const timeout = setTimeout(() => handleBackButton(), 1000 * 5);
+            timeouts.push(timeout)
         }
 
         function onEndBroadcast() {
@@ -241,7 +261,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 message: 'Parece que o Host da sua sala indisponibilizou essa sala. Você será redirecionado para a página de salas',
                 error: true
             })
-            setTimeout(() => handleBackButton(), 1000 * 5)
+            const timeout = setTimeout(() => handleBackButton(), 1000 * 5)
+            timeouts.push(timeout)
         }
 
         function onDisconnect(reason: string) {
@@ -273,6 +294,8 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         socket.off(EVENTS.DISCONNECT_PEER, onDisconnectPeer)
         socket.off(EVENTS.CLIENT.EMIT.END_BROADCAST, onEndBroadcast)
         socket.off(EVENTS.DISCONNECT, onDisconnect)
+
+        timeouts.forEach(t => clearTimeout(t))
         }
     }, [socket])
 

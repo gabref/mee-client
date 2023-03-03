@@ -283,6 +283,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         }
 
         async function onWatcher( clientSocketId: string, roomName: string ) {
+            console.log('socket', socket)
             try {
                 if (roomName != room.room.roomName) return
                 console.log('watcher', clientSocketId)
@@ -366,7 +367,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
 
         function onDisconnect(reason: string) {
             console.log('disconnected', reason)
-            closeVideo(undefined, iRoom.room.roomName)
+            // closeVideo(undefined, iRoom.room.roomName)
         }
 
         function onJoined(room: TRoom) {
@@ -379,6 +380,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
 
         function onUnjoined(roomName: string) {
             if (roomName != iRoom.room.roomName) return
+            console.log('unjoining room')
             setBeingUsed(false)
             setUserInfo({ name: 'default', socketId: '', id: 'default', expirationTime: 0, kicked: false })
         }
