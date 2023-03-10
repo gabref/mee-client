@@ -16,6 +16,7 @@ const SOCKET_CONFIG: Partial<ManagerOptions | SocketOptions> = {
 
 function AdminRooms() {
 	const [ socket, setSocket ] = useState<Socket | null>(null);
+	const [ reRendered, setReRendered ] = useState(true);
     const { userState  } = useContext(AuthContext)
 
 	useEffect(
@@ -34,8 +35,10 @@ function AdminRooms() {
 			function onConnect() {
 				newSocket.emit(EVENTS.ADMIN.CONNECT, {
  					id: userState?.id, 
-					socketId: newSocket.id
+					socketId: newSocket.id,
+					reRendered
 				})
+				setReRendered(false)
 			}
 
 			newSocket.on('connect', onConnect)

@@ -39,6 +39,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
     const { isOpen, modal, toggleModal, handleToggleModal } = useModal()
 
     function handleBackButton() {
+        socket.emit(EVENTS.CLIENT.END, userState?.id)
         setSelectedRoom(null)
         Router.reload()
     }
@@ -107,8 +108,9 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
             timeouts.push(timeout)
         })
     }
-
+    
     useEffect(() => {
+        
         function closeVideo() {
             console.log('*** Closing the video')
             if (peerConnection) {
@@ -266,9 +268,9 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         }
 
         function onDisconnect(reason: string) {
-            console.log(reason)
-            closeVideo()
-            handleBackButton()
+            console.log('disconnect', reason)
+            // closeVideo()
+            // handleBackButton()
         }
 
         join()
@@ -282,10 +284,6 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
         socket.on(EVENTS.CLIENT.EMIT.END_BROADCAST, onEndBroadcast)
         socket.on(EVENTS.DISCONNECT, onDisconnect)
 
-        window.onunload = window.onbeforeunload = () => {
-            socket.disconnect()
-        }
-
         return () => {
             // socket.off('client:broadcaster', onBroadcaster)
         socket.off(EVENTS.CLIENT.EMIT.OFFER, onOffer)
@@ -297,7 +295,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
 
         timeouts.forEach(t => clearTimeout(t))
         }
-    }, [socket])
+    }, [])
 
     async function signInRequest(docNumber: string) {
         const res = await fetch(MEE_URL.API + '/esl/auth/login', {
@@ -331,7 +329,7 @@ function RoomWatcher({ socket, room, setSelectedRoom }:
                 onClick={handleBackButton}
             >Voltar</span> 
             <div className={style.timer}>
-                <Timer initialMinutes={30} showNumbers />
+                <Timer initialMinutes={30} showNumbers onEndTimer={handleBackButton} />
             </div>
 
             <div className={style.section}>

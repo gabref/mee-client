@@ -8,10 +8,11 @@ const ONE_SECOND = 1000 // milliseconds
 
 type TimerProps = {
     initialMinutes?: number,
-    showNumbers?: boolean
+    showNumbers?: boolean,
+    onEndTimer?: () => void;
 }
 
-function Timer({ initialMinutes, showNumbers = false }: TimerProps) {
+function Timer({ initialMinutes, showNumbers = false, onEndTimer }: TimerProps) {
 
     initialMinutes = Math.min((initialMinutes || 30), 30)
 
@@ -26,7 +27,8 @@ function Timer({ initialMinutes, showNumbers = false }: TimerProps) {
                 setMinutes(minutes - 1)
                 setSeconds(59)
             } else {
-                Router.reload()
+                if (onEndTimer)
+                    onEndTimer()
             }
         }, ONE_SECOND)
 

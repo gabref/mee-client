@@ -7,7 +7,7 @@ function Timer({ minutes, seconds }: TimerProps) {
     return (
         <div style={{ marginLeft: 'auto' }}>
             { 
-                minutes > 1 ? minutes + ' minutos restantes' : 
+                minutes >= 1 ? minutes + ' minutos restantes' : 
                 seconds < 10 ? '0' + seconds + ' segundos restantes' : 
                 seconds + ' segundos restantes' 
             }

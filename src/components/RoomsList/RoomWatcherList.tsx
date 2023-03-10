@@ -25,8 +25,9 @@ function RoomWatcherList({ socket, setSelectedRoom }: { socket: Socket, setSelec
             setRooms(rooms)
         }
 
-        function onDisconnect() {
-            Router.reload()
+        function onDisconnect(reason: string) {
+            // Router.reload()
+            console.log('disconnected', reason)
         }
 
         if (!socket) return

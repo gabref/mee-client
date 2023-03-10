@@ -218,7 +218,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
             peerConnection.onnegotiationneeded = null
             // stop all transceivers on the connection
             if (peerConnection.connectionState !== 'closed') {
-                console.log(peerConnection.getTransceivers())
+                console.log('peerConnection', peerConnection.getTransceivers())
                 peerConnection.getTransceivers().forEach(transceiver => {
                     transceiver.stop()
                 })

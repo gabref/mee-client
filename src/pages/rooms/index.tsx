@@ -28,13 +28,34 @@ function Rooms() {
 			const newSocket = io(socketUrl, SOCKET_CONFIG)
 			setSocket(newSocket)
 
-			newSocket.on('connect', () => {
-				console.log(newSocket.id)
-				console.log(newSocket.connected)
+			socket?.on('connect', () => {
+				console.log('connect socket id', newSocket.id)
+				console.log('connect is connected', newSocket.connected)
 			})
+
+			const timeoutSocket = setInterval(() => {
+				newSocket.close()
+			}, 1/2 * 60 * 1000)
+
+			const timeout = setInterval(() => {
+				socket?.close()
+				console.log('closing connection settimeout')
+				const newSocket = io(socketUrl, SOCKET_CONFIG)
+				setSocket(newSocket)
+			}, (1/2 * 60 * 1000) + 3)
+
+			console.log('the page rerendered')
+
+			window.onbeforeunload = () => {
+				console.log('on before unload')
+				console.log('sockets unload', newSocket)
+				newSocket.emit(EVENTS.CLIENT.END, userState?.id)
+			}
 
 			return () => {
 				newSocket.close();
+				clearInterval(timeout)
+				clearInterval(timeoutSocket)
 			};
 		},
 		[ setSocket, userState ]
