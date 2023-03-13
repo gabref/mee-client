@@ -43,24 +43,9 @@ function AdminRooms() {
 
 			newSocket.on('connect', onConnect)
 
-			const timeoutSocket = setInterval(() => {
-				newSocket.close()
-			}, 1/2 * 60 * 1000)
-
-			const timeout = setInterval(() => {
-				socket?.close()
-				console.log('closing connection settimeout')
-				const newSocket = io(socketUrl, SOCKET_CONFIG)
-				setSocket(newSocket)
-			}, (1/2 * 60 * 1000) + 3)
-
-			console.log('the page rerendered')
-
 			return () => {
 				newSocket.removeListener('connect', onConnect)
 				newSocket.close();
-				clearInterval(timeout)
-				clearInterval(timeoutSocket)
 			};
 		},
 		[ setSocket, userState ]
