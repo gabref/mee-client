@@ -30,6 +30,7 @@ function Rooms() {
 
 			window.onbeforeunload = () => {
 				newSocket.emit(EVENTS.CLIENT.END, userState?.id)
+				console.log('unloaded admin')
 			}
 
 			return () => {
