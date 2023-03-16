@@ -29,6 +29,7 @@ function AdminRooms() {
 
 			window.onunload = window.onbeforeunload = () => {
 			    newSocket.emit(EVENTS.ADMIN.EXIT, userState.id)
+				console.log('unloaded admin')
 			    newSocket.disconnect()
 			}
 
@@ -39,6 +40,7 @@ function AdminRooms() {
 					reRendered
 				})
 				setReRendered(false)
+				console.log('reconnected')
 			}
 
 			newSocket.on('connect', onConnect)

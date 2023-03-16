@@ -358,7 +358,7 @@ function RoomHost({ room, socket, setRooms, peerConnections }:
         }
 
         function onDisconnectPeer({ id, roomName }: { id: string, roomName: string }) {
-            console.log('disconnnect peer')
+            console.log('disconnect peer')
             if (roomName != room.room.roomName) return
             closeVideo(id, roomName)
             peerConnections.delete(id)

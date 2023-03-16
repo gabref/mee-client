@@ -4,9 +4,12 @@ export async function blink(eslId: string, color: string) {
     try {
         const id = await login()
 
+        const { HANSHOW_STORE, HANSHOW_STORE_CODE } = process.env
+
         const data = [
                 {
-                    'eslId': eslId,
+                    // 'eslId': eslId,
+                    'goodsId': `${HANSHOW_STORE}/${HANSHOW_STORE_CODE}/${eslId}`,
                     'led_color': [color],
                     'led_count': '200'
                 }
