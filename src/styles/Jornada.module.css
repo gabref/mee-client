@@ -1,0 +1,17 @@
+.contentContainer {
+    margin: 2rem .5rem;
+}
+
+.contentContainer > p {
+    margin: .5rem 0;
+}
+
+.contentContainer > p > strong {
+    color: var(--blue);
+    font-weight: 500;
+}
+
+.title {
+    color: var(--blue);
+    font-weight: 400;
+}
